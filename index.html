@@ -151,6 +151,190 @@
 
         .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 768px) {
+
+            /* --- HEADER --- */
+            .header {
+                padding: 10px 15px;
+                gap: 8px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-row1 {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .logo { font-size: 1.3em; }
+
+            .main-menu {
+                display: flex;
+                gap: 6px;
+                width: 100%;
+            }
+            .menu-btn {
+                flex: 1;
+                padding: 8px 6px;
+                font-size: 0.82em;
+                text-align: center;
+            }
+
+            .user-info {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 6px;
+                font-size: 0.8em;
+                flex-wrap: wrap;
+            }
+            .user-email { max-width: 120px; font-size: 0.85em; }
+            .btn-logout { padding: 5px 10px; font-size: 0.78em; }
+            .sync-status { font-size: 0.7em; padding: 2px 8px; }
+
+            .lang-switch { align-self: flex-end; }
+            .lang-btn { padding: 5px 12px; font-size: 0.8em; }
+
+            /* --- CONTAINER --- */
+            .container {
+                margin: 10px;
+                padding: 14px 12px;
+                border-radius: 14px;
+            }
+
+            /* --- TOP CONTROLS --- */
+            .top-controls {
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 14px;
+            }
+            .opacity-control {
+                width: 100%;
+                justify-content: space-between;
+                box-sizing: border-box;
+            }
+            .opacity-control input[type="range"] { flex: 1; }
+            .top-controls > div:last-child {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+                width: 100%;
+            }
+            .top-controls .action-btn {
+                flex: 1;
+                padding: 9px 8px;
+                font-size: 0.78em;
+                justify-content: center;
+                min-width: 70px;
+            }
+
+            /* --- MONTH/WEEK TABS --- */
+            .month-tabs { gap: 4px; }
+            .m-tab { padding: 8px 12px; font-size: 0.82em; }
+            .week-tabs { gap: 5px; }
+            .w-tab { padding: 5px 11px; font-size: 0.78em; }
+
+            /* --- SALARY BOARD --- */
+            #salary-board {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                padding: 12px;
+                margin-bottom: 16px;
+            }
+            .s-val { font-size: 1.35em; }
+            .s-item small { font-size: 0.7em; }
+
+            /* --- ACTION BUTTONS --- */
+            .main-actions {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin: 14px 0;
+            }
+            .action-btn {
+                padding: 11px 8px;
+                font-size: 0.82em;
+                justify-content: center;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* --- SCHEDULE TABLE --- */
+            /* Bọc bảng trong div scroll ngang */
+            #view-schedule > table,
+            .container table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                min-width: 520px;
+                border-radius: 8px;
+            }
+            th, td {
+                padding: 5px 4px;
+                font-size: 0.78em;
+                min-height: 60px;
+            }
+            .time-col { width: 48px; font-size: 0.75em; }
+            .event {
+                padding: 5px 6px;
+                font-size: 0.76em;
+                border-radius: 5px;
+                margin-bottom: 3px;
+            }
+            .btn-del { width: 18px; height: 18px; font-size: 0.65em; top: -4px; right: -4px; }
+
+            /* --- MODALS --- */
+            .m-box {
+                padding: 20px 16px;
+                border-radius: 14px;
+                max-height: 85vh;
+            }
+            .m-box h3 { font-size: 1em; }
+            .modal { padding: 10px; }
+            textarea, input:not(.auth-input) {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            /* --- CHARTS --- */
+            .charts-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .chart-card { padding: 14px; }
+
+            /* --- OUTPUT --- */
+            #output { padding: 16px; font-size: 0.82em; }
+
+            /* --- FOOTER --- */
+            footer { padding: 20px 15px; font-size: 0.85em; }
+        }
+
+        /* Scroll hint shadow cho bảng */
+        @media (max-width: 768px) {
+            .table-scroll-wrap {
+                position: relative;
+                overflow: hidden;
+            }
+            .table-scroll-wrap::after {
+                content: '';
+                position: absolute;
+                top: 0; right: 0; bottom: 0;
+                width: 28px;
+                background: linear-gradient(to right, transparent, rgba(0,0,0,0.08));
+                pointer-events: none;
+                border-radius: 0 8px 8px 0;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 380px) {
+            .main-actions { grid-template-columns: 1fr 1fr; }
+            .m-tab { padding: 7px 9px; font-size: 0.78em; }
+            #salary-board { grid-template-columns: repeat(2, 1fr); }
+            .s-val { font-size: 1.15em; }
+        }
     </style>
 </head>
 <body>
@@ -183,7 +367,13 @@
 <!-- ===== MAIN APP ===== -->
 <div id="mainWrapper" style="display:none">
     <header class="header">
-        <div class="logo">🚀 PTBtool</div>
+        <div class="header-row1">
+            <div class="logo">🚀 PTBtool</div>
+            <div class="lang-switch">
+                <button class="lang-btn active" id="btn-vi" onclick="setLang('vi')">VI</button>
+                <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+            </div>
+        </div>
         <div class="main-menu">
             <button class="menu-btn active" id="btn-schedule" onclick="switchView('schedule')">📅 <span id="txt-menu-sch">Lịch Dạy</span></button>
             <button class="menu-btn" id="btn-stats" onclick="switchView('stats')">📊 <span id="txt-menu-stat">Thống Kê</span></button>
@@ -192,10 +382,6 @@
             <span class="user-email" id="userEmailDisplay"></span>
             <span class="sync-status sync-ok" id="syncStatus">☁️ Đã lưu</span>
             <button class="btn-logout" onclick="doLogout()">Đăng Xuất</button>
-        </div>
-        <div class="lang-switch">
-            <button class="lang-btn active" id="btn-vi" onclick="setLang('vi')">VI</button>
-            <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
         </div>
     </header>
 
@@ -232,10 +418,12 @@
                 <button class="action-btn b-gen" onclick="genReport()">📋 <span id="txt-btn-report">Báo Cáo</span></button>
                 <button class="action-btn b-clear" onclick="clearAll()">🗑️ <span id="txt-btn-clear">Xóa Hết</span></button>
             </div>
+            <div class="table-scroll-wrap" style="overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:8px;">
             <table>
                 <thead id="tHead"></thead>
                 <tbody id="tBody"></tbody>
             </table>
+            </div>
             <div id="output" style="display:none;"></div>
         </div>
 
