@@ -857,15 +857,15 @@
                     if(paletteIdx >= 10) el.style.color = '#1e293b';
                 }
 
+                el.title = 'Click: sửa | Double-click: đổi màu | Giữ & kéo: dời lịch';
                 el.innerHTML = `<b>${ev.name}</b><br>${ev.start}-${ev.end}<button class="btn-del">×</button>`;
                 const btnDel = el.querySelector('.btn-del');
                 btnDel.addEventListener('mousedown', (e) => e.stopPropagation());
                 btnDel.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
                 btnDel.addEventListener('click', (e) => { e.stopPropagation(); delEv(idx); });
 
-                // Right-click = color picker
-                el.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
+                // Double-click = color picker
+                el.addEventListener('dblclick', (e) => {
                     e.stopPropagation();
                     openColorPicker(idx, e.clientX, e.clientY);
                 });
@@ -883,6 +883,7 @@
     let ghostEl = null;
 
     function makeDraggable(el, evIdx) {
+        let clickTimer = null;
         el.addEventListener('mousedown', (e) => {
             if(e.target.classList.contains('btn-del')) return;
             if(e.button !== 0) return;
@@ -892,6 +893,7 @@
                 let dx = Math.abs(e2.clientX - startX), dy = Math.abs(e2.clientY - startY);
                 if(!dragStarted && (dx > DRAG_THRESHOLD || dy > DRAG_THRESHOLD)) {
                     dragStarted = true; isDragging = true;
+                    clearTimeout(clickTimer); clickTimer = null;
                     startDrag(e2, evIdx, el);
                 }
                 if(dragStarted) { e2.preventDefault(); moveGhost(e2.clientX, e2.clientY); highlightCell(e2.clientX, e2.clientY); }
@@ -900,7 +902,13 @@
                 document.removeEventListener('mousemove', onMove);
                 document.removeEventListener('mouseup', onUp);
                 if(dragStarted) { endDrag(e2.clientX, e2.clientY, el); }
-                else { if(!e2.target.classList.contains('btn-del')) editEv(evIdx); }
+                else {
+                    if(!e2.target.classList.contains('btn-del')) {
+                        // Delay single-click edit so double-click can cancel it
+                        if(clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+                        else { clickTimer = setTimeout(() => { clickTimer = null; editEv(evIdx); }, 230); }
+                    }
+                }
                 dragStarted = false; isDragging = false;
             };
             document.addEventListener('mousemove', onMove);
