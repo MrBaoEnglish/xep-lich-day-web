@@ -98,7 +98,6 @@
         .time-col { background: rgba(241, 245, 249, 0.9); font-weight: bold; width: 70px; color: #475569; font-size: 0.85em; }
 
         .event { background: var(--s); color: white; padding: 8px; border-radius: 6px; font-size: 0.82em; margin-bottom: 5px; cursor: grab; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s; border-left: 4px solid rgba(255,255,255,0.3); user-select: none; }
-        /* FIX: event off giữ màu học sinh, chỉ thêm pattern sọc để phân biệt */
         .event.off {
             opacity: 0.75;
             background-image: repeating-linear-gradient(
@@ -152,183 +151,86 @@
         .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* ===== COLOR PICKER POPUP ===== */
+        .color-picker-popup {
+            position: fixed; z-index: 99999;
+            background: white; border-radius: 16px;
+            padding: 16px; box-shadow: 0 16px 48px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0; width: 264px;
+            animation: cpPopIn 0.15s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes cpPopIn { from { opacity:0; transform: scale(0.88) translateY(6px); } to { opacity:1; transform: scale(1) translateY(0); } }
+        .cp-title { margin: 0 0 12px; font-size: 0.82em; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .cp-student-name { color: var(--p); font-weight: 800; font-size: 1em; text-transform: none; letter-spacing: 0; }
+        .cp-section { font-size: 0.7em; color: #94a3b8; margin: 10px 0 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+        .color-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+        .color-swatch {
+            width: 26px; height: 26px; border-radius: 7px; cursor: pointer;
+            border: 2.5px solid transparent; transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+            position: relative; flex-shrink: 0;
+        }
+        .color-swatch:hover { transform: scale(1.22); border-color: rgba(0,0,0,0.22); box-shadow: 0 3px 8px rgba(0,0,0,0.18); }
+        .color-swatch.selected { border-color: #1e293b; transform: scale(1.18); box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+        .color-swatch.selected::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 900; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+        .cp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 13px; }
+        .cp-btn { padding: 8px 6px; border: none; border-radius: 9px; font-size: 0.78em; font-weight: 700; cursor: pointer; transition: 0.18s; text-align: center; }
+        .cp-btn:hover { filter: brightness(0.93); transform: translateY(-1px); }
+        .cp-btn-apply { background: var(--s); color: white; grid-column: 1 / -1; padding: 10px; font-size: 0.85em; }
+        .cp-btn-reset { background: #f1f5f9; color: #475569; }
+        .cp-btn-all { background: #f0fdf4; color: #065f46; }
+        .cp-close { position: absolute; top: 10px; right: 12px; background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 1.1em; padding: 2px 6px; border-radius: 6px; transition: 0.15s; }
+        .cp-close:hover { background: #f1f5f9; color: #334155; }
+
         /* ===== MOBILE RESPONSIVE ===== */
         @media (max-width: 768px) {
-
-            /* --- HEADER --- */
-            .header {
-                padding: 10px 15px;
-                gap: 8px;
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .header-row1 {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
+            .header { padding: 10px 15px; gap: 8px; flex-direction: column; align-items: stretch; }
+            .header-row1 { display: flex; justify-content: space-between; align-items: center; }
             .logo { font-size: 1.3em; }
-
-            .main-menu {
-                display: flex;
-                gap: 6px;
-                width: 100%;
-            }
-            .menu-btn {
-                flex: 1;
-                padding: 8px 6px;
-                font-size: 0.82em;
-                text-align: center;
-            }
-
-            .user-info {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 6px;
-                font-size: 0.8em;
-                flex-wrap: wrap;
-            }
+            .main-menu { display: flex; gap: 6px; width: 100%; }
+            .menu-btn { flex: 1; padding: 8px 6px; font-size: 0.82em; text-align: center; }
+            .user-info { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 0.8em; flex-wrap: wrap; }
             .user-email { max-width: 120px; font-size: 0.85em; }
             .btn-logout { padding: 5px 10px; font-size: 0.78em; }
             .sync-status { font-size: 0.7em; padding: 2px 8px; }
-
             .lang-switch { align-self: flex-end; }
             .lang-btn { padding: 5px 12px; font-size: 0.8em; }
-
-            /* --- CONTAINER --- */
-            .container {
-                margin: 10px;
-                padding: 14px 12px;
-                border-radius: 14px;
-            }
-
-            /* --- TOP CONTROLS --- */
-            .top-controls {
-                flex-direction: column;
-                gap: 10px;
-                margin-bottom: 14px;
-            }
-            .opacity-control {
-                width: 100%;
-                justify-content: space-between;
-                box-sizing: border-box;
-            }
+            .container { margin: 10px; padding: 14px 12px; border-radius: 14px; }
+            .top-controls { flex-direction: column; gap: 10px; margin-bottom: 14px; }
+            .opacity-control { width: 100%; justify-content: space-between; box-sizing: border-box; }
             .opacity-control input[type="range"] { flex: 1; }
-            .top-controls > div:last-child {
-                display: flex;
-                gap: 6px;
-                flex-wrap: wrap;
-                width: 100%;
-            }
-            .top-controls .action-btn {
-                flex: 1;
-                padding: 9px 8px;
-                font-size: 0.78em;
-                justify-content: center;
-                min-width: 70px;
-            }
-
-            /* --- MONTH/WEEK TABS --- */
+            .top-controls > div:last-child { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; }
+            .top-controls .action-btn { flex: 1; padding: 9px 8px; font-size: 0.78em; justify-content: center; min-width: 70px; }
             .month-tabs { gap: 4px; }
             .m-tab { padding: 8px 12px; font-size: 0.82em; }
             .week-tabs { gap: 5px; }
             .w-tab { padding: 5px 11px; font-size: 0.78em; }
-
-            /* --- SALARY BOARD --- */
-            #salary-board {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding: 12px;
-                margin-bottom: 16px;
-            }
+            #salary-board { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; margin-bottom: 16px; }
             .s-val { font-size: 1.35em; }
             .s-item small { font-size: 0.7em; }
-
-            /* --- ACTION BUTTONS --- */
-            .main-actions {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-                margin: 14px 0;
-            }
-            .action-btn {
-                padding: 11px 8px;
-                font-size: 0.82em;
-                justify-content: center;
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            /* --- SCHEDULE TABLE --- */
-            /* Bọc bảng trong div scroll ngang */
-            #view-schedule > table,
-            .container table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                min-width: 520px;
-                border-radius: 8px;
-            }
-            th, td {
-                padding: 5px 4px;
-                font-size: 0.78em;
-                min-height: 60px;
-            }
+            .main-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 14px 0; }
+            .action-btn { padding: 11px 8px; font-size: 0.82em; justify-content: center; width: 100%; box-sizing: border-box; }
+            #view-schedule > table, .container table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; min-width: 520px; border-radius: 8px; }
+            th, td { padding: 5px 4px; font-size: 0.78em; min-height: 60px; }
             .time-col { width: 48px; font-size: 0.75em; }
-            .event {
-                padding: 5px 6px;
-                font-size: 0.76em;
-                border-radius: 5px;
-                margin-bottom: 3px;
-            }
+            .event { padding: 5px 6px; font-size: 0.76em; border-radius: 5px; margin-bottom: 3px; }
             .btn-del { width: 18px; height: 18px; font-size: 0.65em; top: -4px; right: -4px; }
-
-            /* --- MODALS --- */
-            .m-box {
-                padding: 20px 16px;
-                border-radius: 14px;
-                max-height: 85vh;
-            }
+            .m-box { padding: 20px 16px; border-radius: 14px; max-height: 85vh; }
             .m-box h3 { font-size: 1em; }
             .modal { padding: 10px; }
-            textarea, input:not(.auth-input) {
-                padding: 10px;
-                font-size: 0.9em;
-            }
-
-            /* --- CHARTS --- */
-            .charts-grid {
-                grid-template-columns: 1fr;
-                gap: 14px;
-            }
+            textarea, input:not(.auth-input) { padding: 10px; font-size: 0.9em; }
+            .charts-grid { grid-template-columns: 1fr; gap: 14px; }
             .chart-card { padding: 14px; }
-
-            /* --- OUTPUT --- */
             #output { padding: 16px; font-size: 0.82em; }
-
-            /* --- FOOTER --- */
             footer { padding: 20px 15px; font-size: 0.85em; }
+            .color-picker-popup { width: calc(100vw - 32px); max-width: 300px; }
+            .color-swatch { width: 28px; height: 28px; }
         }
 
-        /* Scroll hint shadow cho bảng */
         @media (max-width: 768px) {
-            .table-scroll-wrap {
-                position: relative;
-                overflow: hidden;
-            }
-            .table-scroll-wrap::after {
-                content: '';
-                position: absolute;
-                top: 0; right: 0; bottom: 0;
-                width: 28px;
-                background: linear-gradient(to right, transparent, rgba(0,0,0,0.08));
-                pointer-events: none;
-                border-radius: 0 8px 8px 0;
-            }
+            .table-scroll-wrap { position: relative; overflow: hidden; }
+            .table-scroll-wrap::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 28px; background: linear-gradient(to right, transparent, rgba(0,0,0,0.08)); pointer-events: none; border-radius: 0 8px 8px 0; }
         }
 
-        /* Extra small phones */
         @media (max-width: 380px) {
             .main-actions { grid-template-columns: 1fr 1fr; }
             .m-tab { padding: 7px 9px; font-size: 0.78em; }
@@ -478,7 +380,7 @@
     </div>
 </div></div>
 
-<!-- Stubs: gọi trước khi module load xong -->
+<!-- Stubs -->
 <script>
     function switchAuthTab(t) { if(window._switchAuthTab) window._switchAuthTab(t); }
     function doLogin() { if(window._doLogin) window._doLogin(); }
@@ -490,7 +392,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDEwa0mBYSjViMRzoOuxGNgo8zarQCpu5Y",
@@ -509,7 +411,6 @@
     let currentUser = null;
     let saveTimeout = null;
 
-    // Expose to window for use in non-module script
     window._fbSaveData = async function(events) {
         if(!currentUser) return;
         setSyncStatus('saving');
@@ -525,9 +426,7 @@
         }, 800);
     };
 
-    window._fbLogout = async function() {
-        await signOut(auth);
-    };
+    window._fbLogout = async function() { await signOut(auth); };
 
     function setSyncStatus(s) {
         const el = document.getElementById('syncStatus');
@@ -535,7 +434,6 @@
         else { el.className = 'sync-status sync-ok'; el.textContent = '☁️ Đã lưu'; }
     }
 
-    // Auth state listener
     onAuthStateChanged(auth, async (user) => {
         if(user) {
             currentUser = user;
@@ -543,23 +441,12 @@
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('mainWrapper').style.display = 'block';
             document.getElementById('appFooter').style.display = 'block';
-            
-            // Load data from Firestore
             try {
                 const docSnap = await getDoc(doc(db, 'users', user.uid));
-                if(docSnap.exists()) {
-                    window.appEvents = docSnap.data().events || [];
-                } else {
-                    window.appEvents = [];
-                }
-            } catch(e) {
-                window.appEvents = [];
-            }
-            
-            // Start app
+                window.appEvents = docSnap.exists() ? (docSnap.data().events || []) : [];
+            } catch(e) { window.appEvents = []; }
             if(window._appReady) window._appReady();
             else window._waitingForAuth = true;
-
         } else {
             currentUser = null;
             document.getElementById('authScreen').style.display = 'flex';
@@ -568,7 +455,6 @@
         }
     });
 
-    // Auth UI functions
     window._switchAuthTab = function(tab) {
         document.getElementById('tab-login').className = `auth-tab ${tab==='login'?'active':''}`;
         document.getElementById('tab-register').className = `auth-tab ${tab==='register'?'active':''}`;
@@ -608,12 +494,8 @@
         const btn = document.querySelector('#auth-login-form .auth-btn');
         if(!email || !pass) return showAuthErr('Vui lòng nhập đầy đủ thông tin.');
         showAuthLoading(btn);
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-        } catch(e) {
-            showAuthErr(errMap[e.code] || 'Lỗi đăng nhập. Thử lại.');
-            hideAuthLoading(btn);
-        }
+        try { await signInWithEmailAndPassword(auth, email, pass); }
+        catch(e) { showAuthErr(errMap[e.code] || 'Lỗi đăng nhập. Thử lại.'); hideAuthLoading(btn); }
     };
 
     window._doRegister = async function() {
@@ -626,10 +508,7 @@
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             await updateProfile(cred.user, { displayName: name });
-        } catch(e) {
-            showAuthErr(errMap[e.code] || 'Lỗi đăng ký. Thử lại.');
-            hideAuthLoading(btn);
-        }
+        } catch(e) { showAuthErr(errMap[e.code] || 'Lỗi đăng ký. Thử lại.'); hideAuthLoading(btn); }
     };
 
     window._doLogout = async function() {
@@ -639,7 +518,6 @@
 
 <!-- ===== MAIN APP SCRIPT ===== -->
 <script>
-    // appEvents is initialized by Firebase module above
     window.appEvents = window.appEvents || [];
     let curMonth = new Date().getMonth() + 1;
     let curWeekIdx = 0;
@@ -676,11 +554,174 @@
         }
     };
 
-    // Called by Firebase module when auth+data ready
-    window._appReady = function() {
-        setLang(lang);
-    };
-    // If Firebase auth resolved before this script ran
+    // ===== COLOR PALETTE: 10 vivid + 12 pastel =====
+    const COLOR_PALETTE = [
+        // --- Vivid (0-9) ---
+        { bg: '#2563eb', border: '#1d4ed8' },   // 0 blue
+        { bg: '#7c3aed', border: '#6d28d9' },   // 1 violet
+        { bg: '#0891b2', border: '#0e7490' },   // 2 cyan
+        { bg: '#059669', border: '#047857' },   // 3 emerald
+        { bg: '#d97706', border: '#b45309' },   // 4 amber
+        { bg: '#db2777', border: '#be185d' },   // 5 pink
+        { bg: '#65a30d', border: '#4d7c0f' },   // 6 lime
+        { bg: '#9333ea', border: '#7e22ce' },   // 7 purple
+        { bg: '#0f766e', border: '#115e59' },   // 8 teal
+        { bg: '#c2410c', border: '#9a3412' },   // 9 orange-red
+        // --- Pastel (10-21) ---
+        { bg: '#93c5fd', border: '#60a5fa' },   // 10 pastel blue
+        { bg: '#c4b5fd', border: '#a78bfa' },   // 11 pastel violet
+        { bg: '#6ee7b7', border: '#34d399' },   // 12 pastel teal
+        { bg: '#fca5a5', border: '#f87171' },   // 13 pastel red
+        { bg: '#fcd34d', border: '#fbbf24' },   // 14 pastel amber
+        { bg: '#f9a8d4', border: '#f472b6' },   // 15 pastel pink
+        { bg: '#86efac', border: '#4ade80' },   // 16 pastel green
+        { bg: '#7dd3fc', border: '#38bdf8' },   // 17 pastel sky
+        { bg: '#d8b4fe', border: '#c084fc' },   // 18 pastel purple
+        { bg: '#fdba74', border: '#fb923c' },   // 19 pastel orange
+        { bg: '#a5f3fc', border: '#67e8f9' },   // 20 pastel cyan
+        { bg: '#fde68a', border: '#fcd34d' },   // 21 pastel yellow
+    ];
+
+    // studentColorMap: name -> palette index (auto-assigned by hash, overrideable)
+    const studentColorMap = {};
+    // eventColorOverride: evIdx -> palette index (per-event manual override, RAM only)
+    const eventColorOverride = {};
+
+    function getStudentColor(name) {
+        if(!name) return COLOR_PALETTE[0];
+        if(studentColorMap[name] !== undefined) return COLOR_PALETTE[studentColorMap[name]];
+        let hash = 0;
+        for(let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        const idx = Math.abs(hash) % COLOR_PALETTE.length;
+        studentColorMap[name] = idx;
+        return COLOR_PALETTE[idx];
+    }
+
+    function getEventColor(evIdx) {
+        if(eventColorOverride[evIdx] !== undefined) return COLOR_PALETTE[eventColorOverride[evIdx]];
+        const ev = appEvents[evIdx];
+        return ev ? getStudentColor(ev.name) : COLOR_PALETTE[0];
+    }
+
+    // ===== COLOR PICKER =====
+    let cpPopup = null;
+    let cpTargetIdx = null;
+    let cpSelectedIdx = null;
+
+    function openColorPicker(evIdx, anchorX, anchorY) {
+        closeColorPicker();
+        cpTargetIdx = evIdx;
+        const ev = appEvents[evIdx];
+        if(!ev) return;
+
+        // Determine current selected index
+        if(eventColorOverride[evIdx] !== undefined) {
+            cpSelectedIdx = eventColorOverride[evIdx];
+        } else if(studentColorMap[ev.name] !== undefined) {
+            cpSelectedIdx = studentColorMap[ev.name];
+        } else {
+            let hash = 0;
+            for(let i = 0; i < ev.name.length; i++) hash = ev.name.charCodeAt(i) + ((hash << 5) - hash);
+            cpSelectedIdx = Math.abs(hash) % COLOR_PALETTE.length;
+        }
+
+        const vivid = COLOR_PALETTE.slice(0, 10);
+        const pastel = COLOR_PALETTE.slice(10);
+
+        const popup = document.createElement('div');
+        popup.className = 'color-picker-popup';
+        popup.style.position = 'fixed';
+        popup.innerHTML = `
+            <button class="cp-close" id="cpCloseBtn" title="Đóng">✕</button>
+            <div class="cp-title">🎨 Màu lớp: <span class="cp-student-name">${ev.name}</span></div>
+            <div class="cp-section">Màu đậm</div>
+            <div class="color-grid" id="cpGridVivid">
+                ${vivid.map((c, i) => `<div class="color-swatch${cpSelectedIdx===i?' selected':''}" data-idx="${i}" style="background:${c.bg}" title="Màu ${i+1}"></div>`).join('')}
+            </div>
+            <div class="cp-section">Màu pastel</div>
+            <div class="color-grid" id="cpGridPastel">
+                ${pastel.map((c, i) => `<div class="color-swatch${cpSelectedIdx===(i+10)?' selected':''}" data-idx="${i+10}" style="background:${c.bg}" title="Pastel ${i+1}"></div>`).join('')}
+            </div>
+            <div class="cp-actions">
+                <button class="cp-btn cp-btn-reset" id="cpBtnReset">↩ Mặc định</button>
+                <button class="cp-btn cp-btn-all" id="cpBtnAll">👥 Tất cả "${ev.name}"</button>
+                <button class="cp-btn cp-btn-apply" id="cpBtnApply">✓ Áp dụng lớp này</button>
+            </div>
+        `;
+
+        document.body.appendChild(popup);
+        cpPopup = popup;
+
+        // Position popup smartly
+        const pw = 280, ph = 260;
+        let left = anchorX + 12, top = anchorY + 12;
+        if(left + pw > window.innerWidth - 12) left = anchorX - pw - 12;
+        if(top + ph > window.innerHeight - 12) top = anchorY - ph - 12;
+        popup.style.left = Math.max(8, left) + 'px';
+        popup.style.top = Math.max(8, top) + 'px';
+
+        // Swatch click
+        popup.querySelectorAll('.color-swatch').forEach(sw => {
+            sw.addEventListener('click', (e) => {
+                e.stopPropagation();
+                popup.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                sw.classList.add('selected');
+                cpSelectedIdx = parseInt(sw.dataset.idx);
+            });
+        });
+
+        // Buttons
+        popup.querySelector('#cpCloseBtn').addEventListener('click', (e) => { e.stopPropagation(); closeColorPicker(); });
+        popup.querySelector('#cpBtnApply').addEventListener('click', (e) => { e.stopPropagation(); cpApply(); });
+        popup.querySelector('#cpBtnAll').addEventListener('click', (e) => { e.stopPropagation(); cpApplyAll(); });
+        popup.querySelector('#cpBtnReset').addEventListener('click', (e) => { e.stopPropagation(); cpReset(); });
+
+        // Close on outside click (delayed so current click doesn't trigger it)
+        setTimeout(() => document.addEventListener('click', cpOutsideClose), 10);
+    }
+
+    function cpOutsideClose(e) {
+        if(cpPopup && !cpPopup.contains(e.target)) closeColorPicker();
+    }
+
+    function closeColorPicker() {
+        if(cpPopup) { cpPopup.remove(); cpPopup = null; }
+        document.removeEventListener('click', cpOutsideClose);
+        cpTargetIdx = null;
+    }
+
+    function cpApply() {
+        if(cpTargetIdx === null || cpSelectedIdx === null) return;
+        eventColorOverride[cpTargetIdx] = cpSelectedIdx;
+        closeColorPicker();
+        renderTable(); calcSalary();
+        showToast('🎨 Đã đổi màu lớp này!');
+    }
+
+    function cpApplyAll() {
+        if(cpTargetIdx === null || cpSelectedIdx === null) return;
+        const name = appEvents[cpTargetIdx]?.name;
+        if(!name) return;
+        studentColorMap[name] = cpSelectedIdx;
+        // Remove per-event overrides for this student
+        appEvents.forEach((ev, i) => { if(ev.name === name) delete eventColorOverride[i]; });
+        closeColorPicker();
+        renderTable(); calcSalary();
+        showToast(`🎨 Đã đổi màu tất cả lớp "${name}"!`);
+    }
+
+    function cpReset() {
+        if(cpTargetIdx === null) return;
+        const name = appEvents[cpTargetIdx]?.name;
+        delete eventColorOverride[cpTargetIdx];
+        if(name) delete studentColorMap[name];
+        closeColorPicker();
+        renderTable(); calcSalary();
+        showToast('↩ Đã reset màu mặc định!');
+    }
+
+    // ===== APP INIT =====
+    window._appReady = function() { setLang(lang); };
     if(window._waitingForAuth) window._appReady();
 
     function setLang(l) {
@@ -776,30 +817,6 @@
         return `${h}${String(r).padStart(2,'0')}`;
     }
 
-    const COLOR_PALETTE = [
-        { bg: '#2563eb', border: '#1d4ed8' },
-        { bg: '#7c3aed', border: '#6d28d9' },
-        { bg: '#0891b2', border: '#0e7490' },
-        { bg: '#059669', border: '#047857' },
-        { bg: '#d97706', border: '#b45309' },
-        { bg: '#db2777', border: '#be185d' },
-        { bg: '#65a30d', border: '#4d7c0f' },
-        { bg: '#9333ea', border: '#7e22ce' },
-        { bg: '#0f766e', border: '#115e59' },
-        { bg: '#c2410c', border: '#9a3412' },
-    ];
-    const studentColorMap = {};
-
-    function getStudentColor(name) {
-        if(!name) return COLOR_PALETTE[0];
-        if(studentColorMap[name]) return studentColorMap[name];
-        let hash = 0;
-        for(let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        const idx = Math.abs(hash) % COLOR_PALETTE.length;
-        studentColorMap[name] = COLOR_PALETTE[idx];
-        return COLOR_PALETTE[idx];
-    }
-
     function renderTable() {
         const d = dict[lang];
         const weeks = getWeeks(curMonth);
@@ -826,11 +843,18 @@
                 el.className = `event ${isOff ? 'off' : ''} ${isConflict ? 'conflict' : ''}`.trim();
                 el.dataset.evIdx = idx;
 
-                // Luôn dùng màu học sinh (kể cả khi off) — trừ conflict
                 if(!isConflict) {
-                    const color = getStudentColor(ev.name);
+                    const color = getEventColor(idx);
                     el.style.background = color.bg;
                     el.style.borderLeftColor = isOff ? 'rgba(255,255,255,0.5)' : color.border;
+                    // Pastel màu chữ tối hơn cho dễ đọc
+                    if(idx >= 10 || (eventColorOverride[idx] !== undefined && eventColorOverride[idx] >= 10) || (studentColorMap[ev.name] !== undefined && studentColorMap[ev.name] >= 10)) {
+                        const paletteIdx = eventColorOverride[idx] !== undefined ? eventColorOverride[idx] : (studentColorMap[ev.name] !== undefined ? studentColorMap[ev.name] : -1);
+                        if(paletteIdx >= 10) el.style.color = '#1e293b';
+                    }
+                    // Check if current color is pastel
+                    const paletteIdx = eventColorOverride[idx] !== undefined ? eventColorOverride[idx] : (studentColorMap[ev.name] !== undefined ? studentColorMap[ev.name] : (function(){let h=0;for(let i=0;i<ev.name.length;i++)h=ev.name.charCodeAt(i)+((h<<5)-h);return Math.abs(h)%COLOR_PALETTE.length;})());
+                    if(paletteIdx >= 10) el.style.color = '#1e293b';
                 }
 
                 el.innerHTML = `<b>${ev.name}</b><br>${ev.start}-${ev.end}<button class="btn-del">×</button>`;
@@ -838,6 +862,14 @@
                 btnDel.addEventListener('mousedown', (e) => e.stopPropagation());
                 btnDel.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
                 btnDel.addEventListener('click', (e) => { e.stopPropagation(); delEv(idx); });
+
+                // Right-click = color picker
+                el.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openColorPicker(idx, e.clientX, e.clientY);
+                });
+
                 cell.appendChild(el);
                 makeDraggable(el, idx);
             }
@@ -874,19 +906,24 @@
             document.addEventListener('mousemove', onMove);
             document.addEventListener('mouseup', onUp);
         });
+
         el.addEventListener('touchstart', (e) => {
             if(e.target.classList.contains('btn-del')) return;
             let t0 = e.touches[0];
             let startX = t0.clientX, startY = t0.clientY;
             let dragStarted = false;
+            let longPressTriggered = false;
+
+            // Long press 600ms = color picker
             let holdTimer = setTimeout(() => {
-                dragStarted = true; isDragging = true;
-                startDrag(t0, evIdx, el);
-            }, 400);
+                longPressTriggered = true;
+                openColorPicker(evIdx, startX, startY);
+            }, 600);
+
             const onMove = (e2) => {
                 let pt = e2.touches[0];
                 let dx = Math.abs(pt.clientX - startX), dy = Math.abs(pt.clientY - startY);
-                if(dx > 10 || dy > 10) clearTimeout(holdTimer);
+                if(dx > 10 || dy > 10) { clearTimeout(holdTimer); }
                 if(dragStarted) { e2.preventDefault(); moveGhost(pt.clientX, pt.clientY); highlightCell(pt.clientX, pt.clientY); }
             };
             const onEnd = (e2) => {
@@ -894,7 +931,7 @@
                 el.removeEventListener('touchmove', onMove);
                 el.removeEventListener('touchend', onEnd);
                 if(dragStarted) { let pt = e2.changedTouches[0]; endDrag(pt.clientX, pt.clientY, el); }
-                else { if(!e2.target.classList.contains('btn-del')) editEv(evIdx); }
+                else if(!longPressTriggered) { if(!e2.target.classList.contains('btn-del')) editEv(evIdx); }
                 dragStarted = false; isDragging = false;
             };
             el.addEventListener('touchmove', onMove, { passive: false });
@@ -908,7 +945,7 @@
         el.classList.add('dragging');
         ghostEl = document.getElementById('dragGhost');
         ghostEl.innerHTML = `<b>${ev.name}</b><br>${ev.start}-${ev.end}`;
-        const ghostColor = getStudentColor(ev.name);
+        const ghostColor = getEventColor(evIdx);
         ghostEl.style.background = ghostColor.bg;
         ghostEl.style.boxShadow = `0 8px 24px ${ghostColor.bg}80`;
         ghostEl.style.display = 'block';
@@ -977,7 +1014,7 @@
         const t = document.createElement('div');
         t.className = 'drag-hint show'; t.style.bottom = '70px'; t.textContent = msg;
         document.body.appendChild(t);
-        setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 2000);
+        setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 2200);
     }
 
     // --- MODAL ---
@@ -1043,7 +1080,6 @@
     function clearAll() { if(confirm(dict[lang].msg_clear)) { appEvents = []; saveData(); } }
 
     function saveData() {
-        // Save to Firestore via Firebase module
         if(window._fbSaveData) window._fbSaveData(appEvents);
         startApp();
     }
