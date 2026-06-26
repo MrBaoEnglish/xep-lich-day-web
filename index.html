@@ -192,6 +192,68 @@
         .cp-close { position: absolute; top: 10px; right: 12px; background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 1.1em; padding: 2px 6px; border-radius: 6px; transition: 0.15s; }
         .cp-close:hover { background: #f1f5f9; color: #334155; }
 
+
+
+        /* ===== PREMIUM UI UPGRADE + SAFE DATA TOOLS ===== */
+        :root {
+            --panel: rgba(255,255,255,0.78);
+            --panel-strong: rgba(255,255,255,0.92);
+            --line: rgba(148,163,184,0.25);
+            --muted: #64748b;
+            --shadow-soft: 0 18px 45px rgba(15,23,42,0.16);
+            --shadow-card: 0 12px 28px rgba(15,23,42,0.12);
+        }
+        .header { box-shadow: 0 14px 40px rgba(0,0,0,0.22); }
+        .logo { background: linear-gradient(135deg, #fff, #93c5fd); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .container { border: 1px solid rgba(255,255,255,0.55); box-shadow: 0 30px 70px rgba(2,6,23,0.45); }
+        .top-controls, .salary-tools, #salary-board, .chart-card { box-shadow: var(--shadow-card); }
+        .m-tab, .w-tab, .menu-btn, .action-btn, .salary-toggle { will-change: transform; }
+        .m-tab:hover, .w-tab:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(15,23,42,0.08); }
+        #salary-board { background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(248,250,252,0.68)); }
+        .s-item { padding: 10px 8px; border-radius: 14px; background: rgba(255,255,255,0.42); border: 1px solid rgba(255,255,255,0.55); }
+        .main-actions { display: grid; grid-template-columns: minmax(280px, 0.8fr) minmax(360px, 1.2fr); gap: 16px; margin: 24px 0; align-items: stretch; }
+        .action-card { background: var(--panel); border: 1px solid rgba(255,255,255,0.7); border-radius: 18px; padding: 16px; box-shadow: var(--shadow-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .action-card-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; }
+        .action-kicker { margin:0 0 4px; font-size:0.72em; letter-spacing:.08em; text-transform:uppercase; font-weight:900; color:var(--s); }
+        .action-card h3 { margin:0; color:var(--p); font-size:1.05em; }
+        .action-card p { margin:4px 0 0; color:var(--muted); font-size:.84em; line-height:1.45; }
+        .action-row { display:flex; flex-wrap:wrap; gap:9px; align-items:center; }
+        .action-btn { border-radius: 12px; padding: 11px 16px; box-shadow: 0 10px 18px rgba(15,23,42,0.12); }
+        .action-btn.secondary { background:#475569; }
+        .action-btn.ghost { color:#334155; background:rgba(255,255,255,0.85); border:1px solid #e2e8f0; box-shadow:none; }
+        .action-btn.danger-soft { background:#fff1f2; color:#be123c; border:1px solid #fecdd3; box-shadow:none; }
+        .action-btn.danger-hard { background:linear-gradient(135deg, #ef4444, #b91c1c); }
+        .action-btn:disabled { opacity:.52; cursor:not-allowed; transform:none; filter:none; }
+        .data-tools-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; margin-top:12px; }
+        .data-mini-card { background: rgba(255,255,255,0.62); border: 1px solid rgba(226,232,240,0.95); border-radius: 14px; padding: 12px; }
+        .data-mini-card label { display:block; font-size:.76em; font-weight:900; color:#475569; margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
+        .inline-fields { display:flex; gap:8px; align-items:center; }
+        .inline-fields input, .inline-fields select { min-width:0; padding:10px; margin:0; border-radius:10px; border:1px solid #cbd5e1; background:white; font-family:inherit; }
+        .inline-fields select { width:100%; }
+        .bulk-bar { display:none; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; padding:12px; border-radius:14px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.22); }
+        .bulk-bar.show { display:flex; }
+        .bulk-count { font-weight:900; color:#1d4ed8; }
+        .danger-zone { margin-top:12px; border:1px solid #fecaca; background:rgba(254,242,242,0.72); border-radius:14px; padding:10px 12px; }
+        .danger-zone summary { cursor:pointer; font-weight:900; color:#b91c1c; }
+        .danger-zone p { color:#7f1d1d; }
+        .event { border-radius: 10px; padding: 9px 9px 9px 10px; box-shadow: 0 8px 18px rgba(15,23,42,0.16); }
+        .event:hover { transform: translateY(-1px) scale(1.015); box-shadow: 0 12px 24px rgba(15,23,42,0.22); }
+        body.selection-mode .event { cursor:pointer; outline: 2px solid rgba(255,255,255,0.35); }
+        .event-select-label { display:flex; align-items:center; gap:6px; margin-bottom:5px; font-size:.75em; font-weight:900; }
+        .event-select-box { width:16px; height:16px; accent-color: var(--s); cursor:pointer; }
+        .event.selected { outline: 3px solid rgba(59,130,246,0.55); box-shadow: 0 0 0 4px rgba(59,130,246,0.18), 0 12px 24px rgba(15,23,42,0.22); }
+        .confirm-details { background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:12px; margin:14px 0; color:#334155; }
+        .confirm-count { font-size:2rem; font-weight:950; color:#ef4444; line-height:1; }
+        .confirm-meta { margin-top:4px; color:#64748b; font-size:.9em; }
+        .confirm-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:16px; flex-wrap:wrap; }
+        .danger-input-wrap { display:none; margin-top:12px; }
+        .danger-input-wrap.show { display:block; }
+        .danger-input-wrap small { display:block; color:#991b1b; font-weight:800; margin-bottom:5px; }
+        .toast-msg { position:fixed; left:50%; bottom:70px; transform:translateX(-50%); display:flex; align-items:center; gap:12px; background:rgba(15,23,42,0.94); color:white; padding:12px 14px; border-radius:999px; z-index:99999; box-shadow:0 18px 42px rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.12); animation:fadeInUp .25s ease; max-width:calc(100vw - 28px); }
+        .toast-msg button { border:none; border-radius:999px; padding:7px 12px; background:#ffffff; color:#0f172a; font-weight:900; cursor:pointer; }
+        .toast-msg button:hover { filter:brightness(.92); }
+        select { font-family: inherit; }
+
         /* ===== MOBILE RESPONSIVE ===== */
         @media (max-width: 768px) {
             .header { padding: 10px 15px; gap: 8px; flex-direction: column; align-items: stretch; }
@@ -220,7 +282,13 @@
             #salary-board { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; margin-bottom: 16px; }
             .s-val { font-size: 1.35em; }
             .s-item small { font-size: 0.7em; }
-            .main-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 14px 0; }
+            .main-actions { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 14px 0; }
+            .action-card { padding: 12px; border-radius: 14px; }
+            .action-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .data-tools-grid { grid-template-columns: 1fr; }
+            .inline-fields { flex-wrap: wrap; }
+            .inline-fields input, .inline-fields select { flex: 1 1 90px; }
+            .bulk-bar { align-items: stretch; flex-direction: column; }
             .action-btn { padding: 11px 8px; font-size: 0.82em; justify-content: center; width: 100%; box-sizing: border-box; }
             #view-schedule > table, .container table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; min-width: 520px; border-radius: 8px; }
             th, td { padding: 5px 4px; font-size: 0.78em; min-height: 60px; }
@@ -245,7 +313,7 @@
         }
 
         @media (max-width: 380px) {
-            .main-actions { grid-template-columns: 1fr 1fr; }
+            .main-actions { grid-template-columns: 1fr; }
             .m-tab { padding: 7px 9px; font-size: 0.78em; }
             #salary-board { grid-template-columns: repeat(2, 1fr); }
             .s-val { font-size: 1.15em; }
@@ -340,10 +408,67 @@
                 <div class="s-item"><small id="txt-stat-sal">Thu Nhập Dự Kiến</small><div id="sum-salary" class="s-val" style="color:var(--g)">0đ</div></div>
             </div>
             <div class="main-actions">
-                <button class="action-btn b-add" onclick="openAddModal()">➕ <span id="txt-btn-add">Thêm Ca</span></button>
-                <button class="action-btn b-quick" onclick="openM('quickM')">⚡ <span id="txt-btn-quick">Nhập Nhanh</span></button>
-                <button class="action-btn b-gen" onclick="genReport()">📋 <span id="txt-btn-report">Báo Cáo</span></button>
-                <button class="action-btn b-clear" onclick="clearAll()">🗑️ <span id="txt-btn-clear">Xóa Hết</span></button>
+                <section class="action-card primary-action-card">
+                    <div class="action-card-header">
+                        <div>
+                            <p class="action-kicker" id="txt-main-actions-kicker">Thao tác nhanh</p>
+                            <h3 id="txt-main-actions-title">Lịch dạy</h3>
+                            <p id="txt-main-actions-sub">Thêm lớp, nhập nhanh và tạo báo cáo tuần.</p>
+                        </div>
+                    </div>
+                    <div class="action-row">
+                        <button class="action-btn b-add" onclick="openAddModal()">➕ <span id="txt-btn-add">Thêm Ca</span></button>
+                        <button class="action-btn b-quick" onclick="openM('quickM')">⚡ <span id="txt-btn-quick">Nhập Nhanh</span></button>
+                        <button class="action-btn b-gen" onclick="genReport()">📋 <span id="txt-btn-report">Báo Cáo</span></button>
+                    </div>
+                </section>
+
+                <section class="action-card data-action-card">
+                    <div class="action-card-header">
+                        <div>
+                            <p class="action-kicker" id="txt-data-kicker">An toàn dữ liệu</p>
+                            <h3 id="txt-data-title">Quản lý dữ liệu</h3>
+                            <p id="txt-data-sub">Xóa theo tuần, tháng, học viên hoặc chọn nhiều mà không làm mất toàn bộ dữ liệu.</p>
+                        </div>
+                    </div>
+                    <div class="action-row">
+                        <button class="action-btn secondary" id="selectModeBtn" onclick="toggleSelectionMode()">☑️ <span id="txt-select-multiple">Chọn nhiều</span></button>
+                        <button class="action-btn danger-soft" onclick="openDeleteCurrentWeek()">🗓️ <span id="txt-delete-week">Xóa tuần hiện tại</span></button>
+                        <button class="action-btn danger-soft" onclick="openDeleteCurrentMonth()">📆 <span id="txt-delete-month">Xóa tháng hiện tại</span></button>
+                    </div>
+
+                    <div class="bulk-bar" id="bulkBar">
+                        <span class="bulk-count" id="bulkCount">0 mục đã chọn</span>
+                        <div class="action-row">
+                            <button class="action-btn danger-soft" id="btnDeleteSelected" onclick="openDeleteSelected()">🗑️ <span id="txt-delete-selected">Xóa mục đã chọn</span></button>
+                            <button class="action-btn ghost" onclick="cancelSelectionMode()">✕ <span id="txt-cancel-selection">Hủy chọn</span></button>
+                        </div>
+                    </div>
+
+                    <div class="data-tools-grid">
+                        <div class="data-mini-card">
+                            <label id="txt-student-filter-label">Xóa theo học viên</label>
+                            <div class="inline-fields">
+                                <select id="delStudentSelect"></select>
+                                <button class="action-btn danger-soft" onclick="openDeleteStudent()">🧑‍🎓 <span id="txt-delete-student">Xóa</span></button>
+                            </div>
+                        </div>
+                        <div class="data-mini-card">
+                            <label id="txt-date-range-label">Xóa theo khoảng ngày</label>
+                            <div class="inline-fields">
+                                <input id="delStartDate" type="text" placeholder="DD/MM">
+                                <input id="delEndDate" type="text" placeholder="DD/MM">
+                                <button class="action-btn danger-soft" onclick="openDeleteDateRange()">🗑️ <span id="txt-delete-range">Xóa</span></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <details class="danger-zone">
+                        <summary id="txt-danger-zone">Vùng nguy hiểm</summary>
+                        <p id="txt-danger-desc">Chỉ dùng khi bạn thật sự muốn xóa toàn bộ lịch dạy.</p>
+                        <button class="action-btn danger-hard" onclick="clearAll()">☢️ <span id="txt-btn-clear">Xóa Hết</span></button>
+                    </details>
+                </section>
             </div>
             <div class="table-scroll-wrap" style="overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:8px;">
             <table>
@@ -404,6 +529,24 @@
     <div style="text-align: right; margin-top: 15px;">
         <button class="action-btn" style="background:#94a3b8; display:inline-flex;" onclick="closeM('addM')">Hủy</button>
         <button class="action-btn b-add" style="display:inline-flex;" onclick="saveOne()"><span id="txt-m-add-save">Xác Nhận</span></button>
+    </div>
+</div></div>
+
+<div class="modal" id="confirmM"><div class="m-box">
+    <h3 id="confirmTitle">Xác nhận xóa</h3>
+    <p id="confirmDesc">Bạn có chắc muốn xóa dữ liệu này?</p>
+    <div class="confirm-details">
+        <div class="confirm-count" id="confirmCount">0</div>
+        <div id="confirmAffectedLabel">lớp học sẽ bị xóa</div>
+        <div class="confirm-meta" id="confirmMeta"></div>
+    </div>
+    <div class="danger-input-wrap" id="dangerPhraseWrap">
+        <small id="txt-type-delete-all">Gõ DELETE ALL để xác nhận xóa toàn bộ dữ liệu.</small>
+        <input id="dangerPhraseInput" type="text" placeholder="DELETE ALL" oninput="validateDangerPhrase()">
+    </div>
+    <div class="confirm-actions">
+        <button class="action-btn ghost" onclick="closeConfirmModal()"><span id="txt-confirm-cancel">Hủy</span></button>
+        <button class="action-btn danger-hard" id="confirmDeleteBtn" onclick="runConfirmAction()"><span id="txt-confirm-delete">Xác nhận xóa</span></button>
     </div>
 </div></div>
 
@@ -553,6 +696,10 @@
     let myBarChart = null;
     let salaryVisible = localStorage.getItem('ts_salary_visible') !== 'false';
     let latestSalaryText = '0đ';
+    let selectionMode = false;
+    let selectedEventIdxs = new Set();
+    let pendingConfirmAction = null;
+    let pendingConfirmNeedsPhrase = false;
 
     const timeSlots = ["7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00"];
     
@@ -568,7 +715,15 @@
             m_add_title: "Thêm/Sửa Lớp Học", lbl_name: "Tên học viên", lbl_date: "Ngày (DD/MM)", lbl_start: "Bắt đầu", lbl_end: "Kết thúc", lbl_note: "Ghi chú (gõ 'off' nếu nghỉ)", m_add_save: "Xác Nhận",
             monthStr: "Tháng", weekStr: "Tuần", days: ["T2","T3","T4","T5","T6","T7","CN"],
             msg_del: "Xóa lớp này?", msg_clear: "XÓA TOÀN BỘ DỮ LIỆU? Không thể hoàn tác!", msg_nodata: "Không có dữ liệu trong tuần này.",
-            stat_title: "Báo Cáo Hoạt Động Giảng Dạy", stat_pie: "Phân Bổ Giờ Dạy Theo Học Viên (Tháng Này)", stat_bar: "Tổng Giờ Dạy 6 Tháng Gần Nhất"
+            stat_title: "Báo Cáo Hoạt Động Giảng Dạy", stat_pie: "Phân Bổ Giờ Dạy Theo Học Viên (Tháng Này)", stat_bar: "Tổng Giờ Dạy 6 Tháng Gần Nhất",
+            main_actions_kicker: "Thao tác nhanh", main_actions_title: "Lịch dạy", main_actions_sub: "Thêm lớp, nhập nhanh và tạo báo cáo tuần.",
+            data_kicker: "An toàn dữ liệu", data_manage: "Quản lý dữ liệu", data_sub: "Xóa theo tuần, tháng, học viên hoặc chọn nhiều mà không làm mất toàn bộ dữ liệu.",
+            delete_week: "Xóa tuần hiện tại", delete_month: "Xóa tháng hiện tại", delete_range: "Xóa theo khoảng ngày", select_multiple: "Chọn nhiều",
+            delete_selected: "Xóa mục đã chọn", cancel_selection: "Hủy chọn", danger_zone: "Vùng nguy hiểm", danger_desc: "Chỉ dùng khi bạn thật sự muốn xóa toàn bộ lịch dạy.",
+            undo: "Hoàn tác", deleted: "Đã xóa", classes_will_be_deleted: "lớp học sẽ bị xóa", selected_count: "mục đã chọn", student_filter: "Xóa theo học viên",
+            delete_student: "Xóa", type_delete_all: "Gõ DELETE ALL để xác nhận xóa toàn bộ dữ liệu.", confirm_cancel: "Hủy", confirm_delete: "Xác nhận xóa",
+            confirm_delete_title: "Xác nhận xóa dữ liệu", confirm_delete_desc: "Hành động này sẽ chỉ xóa các lớp khớp với điều kiện bên dưới.", confirm_delete_all_title: "XÓA TOÀN BỘ DỮ LIỆU?", confirm_delete_all_desc: "Đây là hành động nguy hiểm. Bạn vẫn có thể hoàn tác ngay sau khi xóa, nhưng hãy sao lưu trước nếu cần.",
+            no_items: "Không có lớp nào phù hợp để xóa.", restored: "Đã hoàn tác và khôi phục dữ liệu.", all_students: "Chọn học viên", date_range_invalid: "Vui lòng nhập khoảng ngày hợp lệ dạng DD/MM.", select_mode_on: "Đang chọn nhiều", delete_all_filter: "Toàn bộ dữ liệu"
         },
         en: {
             opacity: "Board Opacity:", backup: "Backup", restore: "Restore", btn_bg: "Change BG",
@@ -581,7 +736,15 @@
             m_add_title: "Add/Edit Class", lbl_name: "Student Name", lbl_date: "Date (DD/MM)", lbl_start: "Start", lbl_end: "End", lbl_note: "Note (type 'off' if canceled)", m_add_save: "Confirm",
             monthStr: "Month", weekStr: "Week", days: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
             msg_del: "Delete this class?", msg_clear: "CLEAR ALL DATA? This cannot be undone!", msg_nodata: "No schedule data for this week.",
-            stat_title: "Teaching Activity Report", stat_pie: "Teaching Hours by Student (This Month)", stat_bar: "Total Teaching Hours (Last 6 Months)"
+            stat_title: "Teaching Activity Report", stat_pie: "Teaching Hours by Student (This Month)", stat_bar: "Total Teaching Hours (Last 6 Months)",
+            main_actions_kicker: "Quick actions", main_actions_title: "Schedule", main_actions_sub: "Add classes, quick import, and generate weekly reports.",
+            data_kicker: "Data safety", data_manage: "Data Management", data_sub: "Delete by week, month, student, date range, or selected classes without wiping the whole dataset.",
+            delete_week: "Delete current week", delete_month: "Delete current month", delete_range: "Delete by date range", select_multiple: "Select multiple",
+            delete_selected: "Delete selected", cancel_selection: "Cancel selection", danger_zone: "Danger zone", danger_desc: "Use this only when you truly want to delete the entire schedule.",
+            undo: "Undo", deleted: "Deleted", classes_will_be_deleted: "classes will be deleted", selected_count: "selected", student_filter: "Delete by student",
+            delete_student: "Delete", type_delete_all: "Type DELETE ALL to confirm deleting all data.", confirm_cancel: "Cancel", confirm_delete: "Confirm delete",
+            confirm_delete_title: "Confirm data deletion", confirm_delete_desc: "This action will only delete classes matching the condition below.", confirm_delete_all_title: "DELETE ALL DATA?", confirm_delete_all_desc: "This is dangerous. You can still undo immediately after deletion, but make a backup first if needed.",
+            no_items: "No matching classes to delete.", restored: "Undo complete. Data restored.", all_students: "Choose student", date_range_invalid: "Please enter a valid DD/MM date range.", select_mode_on: "Selection mode", delete_all_filter: "Entire dataset"
         }
     };
 
@@ -751,6 +914,11 @@
         showToast('↩ Đã reset màu mặc định!');
     }
 
+    function setTxt(id, text) {
+        const el = document.getElementById(id);
+        if(el) el.innerText = text;
+    }
+
     // ===== APP INIT =====
     window._appReady = function() { setLang(lang); };
     if(window._waitingForAuth) window._appReady();
@@ -777,6 +945,27 @@
         document.getElementById('txt-lang-label').innerText = d.lang_label;
         document.getElementById('txt-salary-overview-title').innerText = d.salary_overview_title;
         document.getElementById('txt-salary-overview-sub').innerText = d.salary_overview_sub;
+        setTxt('txt-main-actions-kicker', d.main_actions_kicker);
+        setTxt('txt-main-actions-title', d.main_actions_title);
+        setTxt('txt-main-actions-sub', d.main_actions_sub);
+        setTxt('txt-data-kicker', d.data_kicker);
+        setTxt('txt-data-title', d.data_manage);
+        setTxt('txt-data-sub', d.data_sub);
+        setTxt('txt-select-multiple', selectionMode ? d.select_mode_on : d.select_multiple);
+        setTxt('txt-delete-week', d.delete_week);
+        setTxt('txt-delete-month', d.delete_month);
+        setTxt('txt-delete-selected', d.delete_selected);
+        setTxt('txt-cancel-selection', d.cancel_selection);
+        setTxt('txt-student-filter-label', d.student_filter);
+        setTxt('txt-date-range-label', d.delete_range);
+        setTxt('txt-delete-student', d.delete_student);
+        setTxt('txt-delete-range', d.delete_student);
+        setTxt('txt-danger-zone', d.danger_zone);
+        setTxt('txt-danger-desc', d.danger_desc);
+        setTxt('confirmAffectedLabel', d.classes_will_be_deleted);
+        setTxt('txt-type-delete-all', d.type_delete_all);
+        setTxt('txt-confirm-cancel', d.confirm_cancel);
+        setTxt('txt-confirm-delete', d.confirm_delete);
         syncSalaryToggle();
         startApp();
     }
@@ -797,6 +986,7 @@
         renderWeekTabs();
         renderTable();
         calcSalary();
+        updateDataUI();
     }
 
     function getWeeks(m) {
@@ -853,6 +1043,7 @@
     }
 
     function renderTable() {
+        document.body.classList.toggle('selection-mode', selectionMode);
         const d = dict[lang];
         const weeks = getWeeks(curMonth);
         const week = weeks[curWeekIdx];
@@ -892,12 +1083,32 @@
                     if(paletteIdx >= 10) el.style.color = '#1e293b';
                 }
 
-                el.title = 'Click: sửa | Double-click: đổi màu | Giữ & kéo: dời lịch';
-                el.innerHTML = `<b>${ev.name}</b><br>${ev.start}-${ev.end}<button class="btn-del">×</button>`;
+                if(selectionMode && selectedEventIdxs.has(idx)) el.classList.add('selected');
+                el.title = selectionMode
+                    ? (lang === 'vi' ? 'Click để chọn/bỏ chọn lớp này' : 'Click to select/deselect this class')
+                    : (lang === 'vi' ? 'Click: sửa | Double-click: đổi màu | Giữ & kéo: dời lịch' : 'Click: edit | Double-click: color | Hold & drag: reschedule');
+                const checked = selectedEventIdxs.has(idx) ? 'checked' : '';
+                const selectHtml = selectionMode ? `<label class="event-select-label"><input class="event-select-box" type="checkbox" ${checked}> ${lang === 'vi' ? 'Chọn' : 'Select'}</label>` : '';
+                const deleteHtml = selectionMode ? '' : `<button class="btn-del">×</button>`;
+                el.innerHTML = `${selectHtml}<b>${ev.name}</b><br>${ev.start}-${ev.end}${deleteHtml}`;
+
+                if(selectionMode) {
+                    const cb = el.querySelector('.event-select-box');
+                    cb.addEventListener('click', (e) => { e.stopPropagation(); toggleEventSelection(idx, cb.checked); });
+                    el.addEventListener('click', (e) => {
+                        if(e.target.classList.contains('event-select-box')) return;
+                        toggleEventSelection(idx);
+                    });
+                    cell.appendChild(el);
+                    return;
+                }
+
                 const btnDel = el.querySelector('.btn-del');
-                btnDel.addEventListener('mousedown', (e) => e.stopPropagation());
-                btnDel.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-                btnDel.addEventListener('click', (e) => { e.stopPropagation(); delEv(idx); });
+                if(btnDel) {
+                    btnDel.addEventListener('mousedown', (e) => e.stopPropagation());
+                    btnDel.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+                    btnDel.addEventListener('click', (e) => { e.stopPropagation(); delEv(idx); });
+                }
 
                 // Double-click = color picker
                 el.addEventListener('dblclick', (e) => {
@@ -918,6 +1129,7 @@
     let ghostEl = null;
 
     function makeDraggable(el, evIdx) {
+        if(selectionMode) return;
         let clickTimer = null;
         el.addEventListener('mousedown', (e) => {
             if(e.target.classList.contains('btn-del')) return;
@@ -1053,11 +1265,22 @@
         document.getElementById('dragHint').innerHTML = l === 'vi' ? '✋ Thả vào ô muốn dời lịch đến' : '✋ Drop onto the target slot to reschedule';
     }
 
-    function showToast(msg) {
+    function showToast(msg, actionLabel, actionFn) {
         const t = document.createElement('div');
-        t.className = 'drag-hint show'; t.style.bottom = '70px'; t.textContent = msg;
+        t.className = actionLabel ? 'toast-msg' : 'drag-hint show';
+        if(actionLabel) {
+            const text = document.createElement('span');
+            text.textContent = msg;
+            const btn = document.createElement('button');
+            btn.textContent = actionLabel;
+            btn.onclick = () => { t.remove(); actionFn && actionFn(); };
+            t.appendChild(text); t.appendChild(btn);
+        } else {
+            t.style.bottom = '70px';
+            t.textContent = msg;
+        }
         document.body.appendChild(t);
-        setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 2200);
+        setTimeout(() => { if(document.body.contains(t)) { t.classList.remove('show'); setTimeout(() => t.remove(), 400); } }, actionLabel ? 6500 : 2200);
     }
 
     // --- MODAL ---
@@ -1119,12 +1342,277 @@
         openM('addM');
     }
 
-    function delEv(i) { if(confirm(dict[lang].msg_del)) { appEvents.splice(i, 1); saveData(); } }
-    function clearAll() { if(confirm(dict[lang].msg_clear)) { appEvents = []; saveData(); } }
+    // ===== SAFE DELETION LOGIC =====
+    function formatWeekRange(week) {
+        const s = `${String(week.start.getDate()).padStart(2,'0')}/${String(week.start.getMonth()+1).padStart(2,'0')}`;
+        const e = `${String(week.end.getDate()).padStart(2,'0')}/${String(week.end.getMonth()+1).padStart(2,'0')}`;
+        return `${s} - ${e}`;
+    }
+
+    function getWeekDateStrings(week) {
+        const dates = [];
+        for(let i=0; i<7; i++) {
+            const d = new Date(week.start);
+            d.setDate(week.start.getDate() + i);
+            dates.push(`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`);
+        }
+        return dates;
+    }
+
+    function parseDDMM(value) {
+        const m = String(value || '').trim().match(/^(\d{1,2})\/(\d{1,2})$/);
+        if(!m) return null;
+        const day = Number(m[1]), month = Number(m[2]);
+        const year = new Date().getFullYear();
+        const d = new Date(year, month - 1, day);
+        if(d.getDate() !== day || d.getMonth() !== month - 1) return null;
+        d.setHours(0,0,0,0);
+        return d;
+    }
+
+    function eventDateObj(ev) { return parseDDMM(ev.date); }
+
+    function getIndicesByDateStrings(dateStrings) {
+        const set = new Set(dateStrings);
+        return appEvents.map((e, i) => set.has(e.date) ? i : -1).filter(i => i !== -1);
+    }
+
+    function getIndicesByMonth(month) {
+        return appEvents.map((e, i) => parseInt(e.date.split('/')[1]) === month ? i : -1).filter(i => i !== -1);
+    }
+
+    function getIndicesByStudent(name) {
+        return appEvents.map((e, i) => e.name === name ? i : -1).filter(i => i !== -1);
+    }
+
+    function getIndicesByDateRange(startValue, endValue) {
+        let start = parseDDMM(startValue), end = parseDDMM(endValue);
+        if(!start || !end) return null;
+        if(start > end) [start, end] = [end, start];
+        return appEvents.map((e, i) => {
+            const d = eventDateObj(e);
+            return d && d >= start && d <= end ? i : -1;
+        }).filter(i => i !== -1);
+    }
+
+    function clearEventColorOverrides() {
+        Object.keys(eventColorOverride).forEach(k => delete eventColorOverride[k]);
+    }
+
+    function createUndoBackup() {
+        const payload = { events: JSON.parse(JSON.stringify(appEvents)), savedAt: new Date().toISOString() };
+        localStorage.setItem('ts_undo_backup', JSON.stringify(payload));
+    }
+
+    function undoLastDelete() {
+        const raw = localStorage.getItem('ts_undo_backup');
+        if(!raw) return;
+        try {
+            const payload = JSON.parse(raw);
+            if(Array.isArray(payload.events)) {
+                appEvents = payload.events;
+                selectionMode = false;
+                selectedEventIdxs.clear();
+                clearEventColorOverrides();
+                saveData();
+                showToast(dict[lang].restored);
+            }
+        } catch(e) { console.error('Undo failed:', e); }
+    }
+
+    function openConfirmModal(opts) {
+        const d = dict[lang];
+        pendingConfirmAction = opts.onConfirm;
+        pendingConfirmNeedsPhrase = !!opts.requirePhrase;
+        setTxt('confirmTitle', opts.title || d.confirm_delete_title);
+        setTxt('confirmDesc', opts.description || d.confirm_delete_desc);
+        setTxt('confirmCount', String(opts.count || 0));
+        setTxt('confirmAffectedLabel', d.classes_will_be_deleted);
+        setTxt('confirmMeta', opts.meta || '');
+        setTxt('txt-confirm-delete', opts.confirmText || d.confirm_delete);
+        setTxt('txt-confirm-cancel', d.confirm_cancel);
+        setTxt('txt-type-delete-all', d.type_delete_all);
+        const wrap = document.getElementById('dangerPhraseWrap');
+        const input = document.getElementById('dangerPhraseInput');
+        const btn = document.getElementById('confirmDeleteBtn');
+        input.value = '';
+        wrap.classList.toggle('show', pendingConfirmNeedsPhrase);
+        btn.disabled = pendingConfirmNeedsPhrase;
+        openM('confirmM');
+    }
+
+    function validateDangerPhrase() {
+        const input = document.getElementById('dangerPhraseInput');
+        const btn = document.getElementById('confirmDeleteBtn');
+        btn.disabled = pendingConfirmNeedsPhrase && input.value.trim() !== 'DELETE ALL';
+    }
+
+    function closeConfirmModal() {
+        pendingConfirmAction = null;
+        pendingConfirmNeedsPhrase = false;
+        closeM('confirmM');
+    }
+
+    function runConfirmAction() {
+        if(pendingConfirmNeedsPhrase && document.getElementById('dangerPhraseInput').value.trim() !== 'DELETE ALL') return;
+        const action = pendingConfirmAction;
+        closeConfirmModal();
+        if(typeof action === 'function') action();
+    }
+
+    function deleteByIndices(indices, metaLabel) {
+        const d = dict[lang];
+        const unique = [...new Set(indices)].sort((a,b) => a - b);
+        if(unique.length === 0) { showToast(d.no_items); return; }
+        createUndoBackup();
+        const delSet = new Set(unique);
+        appEvents = appEvents.filter((_, i) => !delSet.has(i));
+        selectionMode = false;
+        selectedEventIdxs.clear();
+        clearEventColorOverrides();
+        saveData();
+        showToast(`${d.deleted} ${unique.length} ${lang === 'vi' ? 'lớp học' : 'classes'}${metaLabel ? ` • ${metaLabel}` : ''}`, d.undo, undoLastDelete);
+    }
+
+    function openDeleteCurrentWeek() {
+        const weeks = getWeeks(curMonth);
+        const week = weeks[curWeekIdx];
+        const range = formatWeekRange(week);
+        const indices = getIndicesByDateStrings(getWeekDateStrings(week));
+        if(indices.length === 0) return showToast(dict[lang].no_items);
+        openConfirmModal({
+            title: dict[lang].confirm_delete_title,
+            description: dict[lang].confirm_delete_desc,
+            count: indices.length,
+            meta: `${dict[lang].delete_week}: ${range}`,
+            onConfirm: () => deleteByIndices(indices, range)
+        });
+    }
+
+    function openDeleteCurrentMonth() {
+        const indices = getIndicesByMonth(curMonth);
+        if(indices.length === 0) return showToast(dict[lang].no_items);
+        const meta = `${dict[lang].monthStr} ${String(curMonth).padStart(2,'0')}`;
+        openConfirmModal({
+            title: dict[lang].confirm_delete_title,
+            description: dict[lang].confirm_delete_desc,
+            count: indices.length,
+            meta: `${dict[lang].delete_month}: ${meta}`,
+            onConfirm: () => deleteByIndices(indices, meta)
+        });
+    }
+
+    function openDeleteStudent() {
+        const select = document.getElementById('delStudentSelect');
+        const name = select ? select.value : '';
+        if(!name) return showToast(dict[lang].no_items);
+        const indices = getIndicesByStudent(name);
+        if(indices.length === 0) return showToast(dict[lang].no_items);
+        openConfirmModal({
+            title: dict[lang].confirm_delete_title,
+            description: dict[lang].confirm_delete_desc,
+            count: indices.length,
+            meta: `${dict[lang].student_filter}: ${name}`,
+            onConfirm: () => deleteByIndices(indices, name)
+        });
+    }
+
+    function openDeleteDateRange() {
+        const start = document.getElementById('delStartDate').value;
+        const end = document.getElementById('delEndDate').value;
+        const indices = getIndicesByDateRange(start, end);
+        if(indices === null) return showToast(dict[lang].date_range_invalid);
+        if(indices.length === 0) return showToast(dict[lang].no_items);
+        const meta = `${start} - ${end}`;
+        openConfirmModal({
+            title: dict[lang].confirm_delete_title,
+            description: dict[lang].confirm_delete_desc,
+            count: indices.length,
+            meta: `${dict[lang].delete_range}: ${meta}`,
+            onConfirm: () => deleteByIndices(indices, meta)
+        });
+    }
+
+    function toggleSelectionMode() {
+        selectionMode = !selectionMode;
+        if(!selectionMode) selectedEventIdxs.clear();
+        renderTable();
+        updateDataUI();
+    }
+
+    function cancelSelectionMode() {
+        selectionMode = false;
+        selectedEventIdxs.clear();
+        renderTable();
+        updateDataUI();
+    }
+
+    function toggleEventSelection(idx, forceState) {
+        const shouldSelect = typeof forceState === 'boolean' ? forceState : !selectedEventIdxs.has(idx);
+        if(shouldSelect) selectedEventIdxs.add(idx); else selectedEventIdxs.delete(idx);
+        updateDataUI();
+        renderTable();
+    }
+
+    function openDeleteSelected() {
+        const indices = [...selectedEventIdxs];
+        if(indices.length === 0) return showToast(dict[lang].no_items);
+        openConfirmModal({
+            title: dict[lang].confirm_delete_title,
+            description: dict[lang].confirm_delete_desc,
+            count: indices.length,
+            meta: dict[lang].delete_selected,
+            onConfirm: () => deleteByIndices(indices, dict[lang].delete_selected)
+        });
+    }
+
+    function delEv(i) {
+        const ev = appEvents[i];
+        openConfirmModal({
+            title: dict[lang].confirm_delete_title,
+            description: dict[lang].msg_del,
+            count: 1,
+            meta: ev ? `${ev.name} • ${ev.date} • ${ev.start}-${ev.end}` : '',
+            onConfirm: () => deleteByIndices([i], ev ? ev.name : '')
+        });
+    }
+
+    function clearAll() {
+        const count = appEvents.length;
+        if(count === 0) return showToast(dict[lang].no_items);
+        openConfirmModal({
+            title: dict[lang].confirm_delete_all_title,
+            description: dict[lang].confirm_delete_all_desc,
+            count,
+            meta: dict[lang].delete_all_filter,
+            requirePhrase: true,
+            onConfirm: () => deleteByIndices(appEvents.map((_, i) => i), dict[lang].delete_all_filter)
+        });
+    }
+
+    function updateDataUI() {
+        const d = dict[lang];
+        setTxt('txt-select-multiple', selectionMode ? d.select_mode_on : d.select_multiple);
+        const bulkBar = document.getElementById('bulkBar');
+        const bulkCount = document.getElementById('bulkCount');
+        if(bulkBar) bulkBar.classList.toggle('show', selectionMode);
+        if(bulkCount) bulkCount.innerText = `${selectedEventIdxs.size} ${d.selected_count}`;
+        const deleteBtn = document.getElementById('btnDeleteSelected');
+        if(deleteBtn) deleteBtn.disabled = selectedEventIdxs.size === 0;
+        const select = document.getElementById('delStudentSelect');
+        if(select) {
+            const current = select.value;
+            const names = [...new Set(appEvents.map(e => e.name).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+            select.innerHTML = `<option value="">${d.all_students}</option>` + names.map(n => `<option value="${String(n).replace(/"/g, '&quot;')}">${n}</option>`).join('');
+            if(names.includes(current)) select.value = current;
+        }
+    }
 
     function saveData() {
         if(window._fbSaveData) window._fbSaveData(appEvents);
         startApp();
+        if(document.getElementById('view-stats')?.style.display !== 'none') updateCharts();
+        updateDataUI();
     }
 
     // --- LOGIC & REPORT ---
