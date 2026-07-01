@@ -384,6 +384,8 @@
                 <input type="file" id="bgInput" accept="image/*" onchange="changeBg(event)">
                 <button class="action-btn b-backup" onclick="exportBackup()">💾 <span id="txt-backup">Backup</span></button>
                 <button class="action-btn b-restore" onclick="document.getElementById('importInput').click()">📂 <span id="txt-restore">Restore</span></button>
+                <button class="action-btn secondary" onclick="reloadCloudData()">☁️ Reload Cloud</button>
+                <button class="action-btn ghost" onclick="showSyncDebugInfo()">🧪 Debug</button>
                 <input type="file" id="importInput" accept=".json" onchange="importBackup(event)">
             </div>
         </div>
@@ -564,7 +566,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDEwa0mBYSjViMRzoOuxGNgo8zarQCpu5Y",
@@ -581,35 +583,68 @@
     const db = getFirestore(app);
 
     let currentUser = null;
+    let unsubscribeUserDoc = null;
+    window._currentUserId = null;
+    window._cloudLoadSource = 'none';
 
     function cloneEventsForSave(events) {
         return JSON.parse(JSON.stringify(Array.isArray(events) ? events : []));
     }
 
-    function readLocalEventsBackup() {
+    function userLocalKey(uid = currentUser?.uid) {
+        return uid ? `ptbtool_data_final_${uid}` : null;
+    }
+
+    function readLocalEventsBackup(uid = currentUser?.uid) {
         try {
-            const raw = localStorage.getItem('ptbtool_data_final');
+            const key = userLocalKey(uid);
+            if(!key) return [];
+            const raw = localStorage.getItem(key);
             if(!raw) return [];
             const parsed = JSON.parse(raw);
             if(Array.isArray(parsed)) return parsed;
             if(parsed && Array.isArray(parsed.events)) return parsed.events;
             return [];
         } catch(e) {
-            console.warn('Cannot read local backup:', e);
+            console.warn('Cannot read user-scoped local backup:', e);
             return [];
         }
     }
+
+    function writeLocalEventsBackup(events, uid = currentUser?.uid) {
+        try {
+            const key = userLocalKey(uid);
+            if(!key) return;
+            localStorage.setItem(key, JSON.stringify(cloneEventsForSave(events)));
+            localStorage.setItem(`${key}_updatedAt`, new Date().toISOString());
+        } catch(e) {
+            console.warn('Cannot write user-scoped local backup:', e);
+        }
+    }
+
+    window._getUserLocalKey = userLocalKey;
+    window._readLocalEventsForCurrentUser = () => readLocalEventsBackup();
+    window._writeLocalEventsForCurrentUser = (events) => writeLocalEventsBackup(events);
 
     window._fbSaveData = async function(events) {
         if(!currentUser) {
             setSyncStatus('offline');
             throw new Error('User is not logged in. Firebase sync skipped.');
         }
+        const payload = cloneEventsForSave(events);
+        writeLocalEventsBackup(payload, currentUser.uid);
         setSyncStatus('saving');
         try {
             await setDoc(
                 doc(db, 'users', currentUser.uid),
-                { events: cloneEventsForSave(events), updatedAt: new Date().toISOString() },
+                {
+                    events: payload,
+                    updatedAt: serverTimestamp(),
+                    updatedAtISO: new Date().toISOString(),
+                    updatedAtMs: Date.now(),
+                    ownerUid: currentUser.uid,
+                    ownerEmail: currentUser.email || null
+                },
                 { merge: true }
             );
             setSyncStatus('ok');
@@ -619,6 +654,17 @@
             setSyncStatus('error');
             throw e;
         }
+    };
+
+    window._fbForceReload = async function() {
+        if(!currentUser) throw new Error('No logged-in user.');
+        const snap = await getDoc(doc(db, 'users', currentUser.uid));
+        const cloudEvents = snap.exists() && Array.isArray(snap.data().events) ? snap.data().events : [];
+        window.appEvents = cloudEvents;
+        writeLocalEventsBackup(cloudEvents, currentUser.uid);
+        if(window._applyCloudEvents) window._applyCloudEvents(cloudEvents, { source: 'manualReload' });
+        setSyncStatus('ok');
+        return cloudEvents;
     };
 
     window._fbLogout = async function() { await signOut(auth); };
@@ -642,26 +688,58 @@
     }
 
     onAuthStateChanged(auth, async (user) => {
+        if(unsubscribeUserDoc) {
+            unsubscribeUserDoc();
+            unsubscribeUserDoc = null;
+        }
+
         if(user) {
             currentUser = user;
+            window._currentUserId = user.uid;
+            window._currentUserEmail = user.email || '';
             document.getElementById('userEmailDisplay').textContent = user.displayName || user.email;
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('mainWrapper').style.display = 'block';
             document.getElementById('appFooter').style.display = 'block';
+
+            const userDocRef = doc(db, 'users', user.uid);
             try {
-                const docSnap = await getDoc(doc(db, 'users', user.uid));
-                const cloudEvents = docSnap.exists() ? (docSnap.data().events || []) : [];
-                window.appEvents = Array.isArray(cloudEvents) && cloudEvents.length ? cloudEvents : readLocalEventsBackup();
+                const docSnap = await getDoc(userDocRef);
+                if(docSnap.exists() && Array.isArray(docSnap.data().events)) {
+                    window.appEvents = docSnap.data().events;
+                    window._cloudLoadSource = 'firestore';
+                } else {
+                    window.appEvents = readLocalEventsBackup(user.uid);
+                    window._cloudLoadSource = window.appEvents.length ? 'local-user-backup' : 'empty-new-user';
+                }
+                writeLocalEventsBackup(window.appEvents, user.uid);
                 setSyncStatus('ok');
             } catch(e) {
                 console.error('Load error:', e);
-                window.appEvents = readLocalEventsBackup();
+                window.appEvents = readLocalEventsBackup(user.uid);
+                window._cloudLoadSource = 'local-user-backup-after-cloud-error';
                 setSyncStatus('offline');
             }
+
             if(window._appReady) window._appReady();
             else window._waitingForAuth = true;
+
+            unsubscribeUserDoc = onSnapshot(userDocRef, (snap) => {
+                if(!currentUser || currentUser.uid !== user.uid || !snap.exists()) return;
+                const remoteEvents = Array.isArray(snap.data().events) ? snap.data().events : [];
+                writeLocalEventsBackup(remoteEvents, user.uid);
+                window.appEvents = remoteEvents;
+                if(window._applyCloudEvents) window._applyCloudEvents(remoteEvents, { source: 'snapshot' });
+                setSyncStatus('ok');
+            }, (err) => {
+                console.error('Realtime sync error:', err);
+                setSyncStatus('offline');
+            });
         } else {
             currentUser = null;
+            window._currentUserId = null;
+            window._currentUserEmail = '';
+            window.appEvents = [];
             document.getElementById('authScreen').style.display = 'flex';
             document.getElementById('mainWrapper').style.display = 'none';
             document.getElementById('appFooter').style.display = 'none';
@@ -744,7 +822,7 @@
     let pendingConfirmAction = null;
     let pendingConfirmNeedsPhrase = false;
 
-    const LOCAL_DATA_KEY = 'ptbtool_data_final';
+    const LOCAL_DATA_PREFIX = 'ptbtool_data_final';
 
     function escapeHTML(value) {
         return String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -752,9 +830,19 @@
         }[ch]));
     }
 
+    function getLocalDataKey() {
+        if(window._getUserLocalKey) {
+            const key = window._getUserLocalKey();
+            if(key) return key;
+        }
+        const uid = window._currentUserId || 'guest';
+        return `${LOCAL_DATA_PREFIX}_${uid}`;
+    }
+
     function readLocalEvents() {
         try {
-            const raw = localStorage.getItem(LOCAL_DATA_KEY);
+            if(window._readLocalEventsForCurrentUser) return window._readLocalEventsForCurrentUser();
+            const raw = localStorage.getItem(getLocalDataKey());
             if(!raw) return [];
             const parsed = JSON.parse(raw);
             if(Array.isArray(parsed)) return parsed;
@@ -768,10 +856,22 @@
 
     function writeLocalEvents(events) {
         try {
-            localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(Array.isArray(events) ? events : []));
+            if(window._writeLocalEventsForCurrentUser) {
+                window._writeLocalEventsForCurrentUser(events);
+                return;
+            }
+            localStorage.setItem(getLocalDataKey(), JSON.stringify(Array.isArray(events) ? events : []));
         } catch(e) {
             console.warn('Cannot write local schedule backup:', e);
             showToast(lang === 'vi' ? '⚠️ Bộ nhớ trình duyệt đã đầy, chưa lưu tạm được.' : '⚠️ Browser storage is full. Local backup was not saved.');
+        }
+    }
+
+    function sameEvents(a, b) {
+        try {
+            return JSON.stringify(normalizeEvents(a)) === JSON.stringify(normalizeEvents(b));
+        } catch(e) {
+            return false;
         }
     }
 
@@ -1049,11 +1149,33 @@
 
     // ===== APP INIT =====
     window._appReady = function() {
-        appEvents = normalizeEvents(window.appEvents && window.appEvents.length ? window.appEvents : readLocalEvents());
+        const loadedEvents = Array.isArray(window.appEvents) ? window.appEvents : readLocalEvents();
+        appEvents = normalizeEvents(loadedEvents);
         window.appEvents = appEvents;
         writeLocalEvents(appEvents);
         setLang(lang);
+        const source = window._cloudLoadSource || 'unknown';
+        if(source.includes('local-user-backup')) {
+            showToast(lang === 'vi' ? '💾 Đang dùng bản lưu tạm của tài khoản này.' : '💾 Using this account’s local backup.');
+        }
     };
+
+    window._applyCloudEvents = function(events, meta = {}) {
+        const normalized = normalizeEvents(events);
+        if(sameEvents(appEvents, normalized)) return;
+        appEvents = normalized;
+        window.appEvents = appEvents;
+        writeLocalEvents(appEvents);
+        startApp();
+        if(document.getElementById('view-stats')?.style.display !== 'none') updateCharts();
+        updateDataUI();
+        if(meta.source === 'manualReload') {
+            showToast(lang === 'vi' ? '☁️ Đã tải lại dữ liệu từ cloud.' : '☁️ Reloaded data from cloud.');
+        } else if(meta.source === 'snapshot') {
+            showToast(lang === 'vi' ? '☁️ Dữ liệu đã đồng bộ từ thiết bị khác.' : '☁️ Synced data from another device.');
+        }
+    };
+
     if(window._waitingForAuth) window._appReady();
 
     function setLang(l) {
@@ -1989,11 +2111,37 @@
         updateOpacity(op);
     }
 
+    // --- BASIC SYNC DEBUG ---
+    function showSyncDebugInfo() {
+        const info = {
+            user: window._currentUserEmail || '(not logged in)',
+            uid: window._currentUserId || '(none)',
+            localKey: getLocalDataKey(),
+            eventsInMemory: Array.isArray(appEvents) ? appEvents.length : 0,
+            loadSource: window._cloudLoadSource || 'unknown',
+            online: navigator.onLine
+        };
+        console.table(info);
+        showToast(lang === 'vi'
+            ? `🧪 Debug: ${info.eventsInMemory} lớp | ${info.loadSource} | ${info.online ? 'online' : 'offline'}`
+            : `🧪 Debug: ${info.eventsInMemory} classes | ${info.loadSource} | ${info.online ? 'online' : 'offline'}`);
+    }
+
+    async function reloadCloudData() {
+        try {
+            if(!window._fbForceReload) throw new Error('Firebase reload is not ready.');
+            await window._fbForceReload();
+        } catch(e) {
+            console.error('Cloud reload failed:', e);
+            showToast(lang === 'vi' ? '⚠️ Không tải lại được cloud. Kiểm tra mạng/Firebase Rules.' : '⚠️ Could not reload cloud data. Check network/Firebase Rules.');
+        }
+    }
+
     // --- BACKUP ---
     function exportBackup() {
         const payload = {
             app: 'TeachingSchedule.io',
-            version: 'fixed-debugged-2026-07-01',
+            version: 'fixed-debugged-account-sync-2026-07-01',
             exportedAt: new Date().toISOString(),
             events: normalizeEvents(appEvents)
         };
