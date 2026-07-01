@@ -256,6 +256,43 @@
         .toast-msg button:hover { filter:brightness(.92); }
         select { font-family: inherit; }
 
+
+        /* ===== TEACHER MANAGEMENT EXTENSIONS ===== */
+        .teacher-dashboard { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:14px; margin: 0 0 18px; }
+        .dash-card { background:linear-gradient(135deg, rgba(255,255,255,.9), rgba(248,250,252,.72)); border:1px solid rgba(226,232,240,.9); border-radius:18px; padding:16px; box-shadow:var(--shadow-card); min-height:94px; }
+        .dash-card small { display:block; color:#64748b; font-weight:900; text-transform:uppercase; letter-spacing:.05em; font-size:.72em; margin-bottom:7px; }
+        .dash-card strong { display:block; color:var(--p); font-size:1.75em; line-height:1.05; font-weight:950; }
+        .dash-card span { display:block; margin-top:5px; color:#64748b; font-size:.84em; font-weight:650; }
+        .dash-card.success strong { color:#059669; }
+        .dash-card.danger strong { color:#dc2626; }
+        .next-class-card { display:flex; justify-content:space-between; align-items:center; gap:14px; background:linear-gradient(135deg, rgba(30,41,59,.92), rgba(37,99,235,.82)); color:white; border-radius:20px; padding:18px 20px; box-shadow:0 18px 42px rgba(15,23,42,.28); margin-bottom:18px; }
+        .next-class-card small { color:#bfdbfe; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+        .next-class-card h3 { margin:4px 0 3px; font-size:1.22em; }
+        .next-class-card p { margin:0; color:#e2e8f0; line-height:1.45; }
+        .next-class-card .action-btn.ghost { background:rgba(255,255,255,.95); color:#1e293b; white-space:nowrap; }
+        .filter-card { background:var(--panel); border:1px solid rgba(255,255,255,.72); border-radius:18px; padding:16px; box-shadow:var(--shadow-card); margin:0 0 18px; }
+        .filter-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+        .filter-head h3 { margin:0; color:var(--p); font-size:1.05em; }
+        .filter-grid { display:grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap:10px; }
+        .filter-grid label, .modal-grid label { display:block; color:#475569; font-size:.76em; font-weight:900; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+        .filter-grid input, .filter-grid select, .modal-grid select { width:100%; padding:11px 12px; border-radius:12px; border:1px solid #cbd5e1; background:white; box-sizing:border-box; font-family:inherit; margin:0; }
+        .filter-result { margin-top:11px; color:#64748b; font-size:.86em; font-weight:700; }
+        .modal-grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px; }
+        .event-meta { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
+        .event-pill { display:inline-flex; align-items:center; border-radius:999px; padding:2px 6px; background:rgba(255,255,255,.2); color:inherit; font-size:.7em; font-weight:900; line-height:1.25; }
+        .event-pill.payment-paid { background:rgba(16,185,129,.22); }
+        .event-pill.payment-unpaid { background:rgba(239,68,68,.20); }
+        .event-detail-line { display:block; opacity:.92; margin-top:2px; font-size:.76em; }
+        .student-summary-card { margin-top:20px; }
+        .summary-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; }
+        .summary-head h3 { margin:0; }
+        .student-summary-wrap { overflow-x:auto; border-radius:12px; }
+        .student-summary-table { border-spacing:0; min-width:760px; }
+        .student-summary-table th, .student-summary-table td { min-height:auto; text-align:left; padding:11px 12px; border-radius:0; border-bottom:1px solid #e2e8f0; background:rgba(255,255,255,.72); }
+        .student-summary-table th { background:#f8fafc; color:#334155; font-size:.78em; text-transform:uppercase; letter-spacing:.04em; }
+        .student-summary-table td.num { text-align:right; font-variant-numeric:tabular-nums; }
+        .empty-state { text-align:center !important; color:#64748b; padding:24px !important; }
+
         /* ===== MOBILE RESPONSIVE ===== */
         @media (max-width: 768px) {
             .header { padding: 10px 15px; gap: 8px; flex-direction: column; align-items: stretch; }
@@ -301,6 +338,13 @@
             .m-box h3 { font-size: 1em; }
             .modal { padding: 10px; }
             textarea, input:not(.auth-input) { padding: 10px; font-size: 0.9em; }
+            .teacher-dashboard { grid-template-columns: repeat(2, 1fr); gap:10px; }
+            .dash-card { padding:12px; min-height:78px; }
+            .dash-card strong { font-size:1.35em; }
+            .next-class-card { flex-direction:column; align-items:stretch; padding:14px; }
+            .filter-grid { grid-template-columns: 1fr; }
+            .filter-head { flex-direction:column; align-items:stretch; }
+            .modal-grid { grid-template-columns: 1fr; }
             .charts-grid { grid-template-columns: 1fr; gap: 14px; }
             .chart-card { padding: 14px; }
             #output { padding: 16px; font-size: 0.82em; }
@@ -384,8 +428,8 @@
                 <input type="file" id="bgInput" accept="image/*" onchange="changeBg(event)">
                 <button class="action-btn b-backup" onclick="exportBackup()">💾 <span id="txt-backup">Backup</span></button>
                 <button class="action-btn b-restore" onclick="document.getElementById('importInput').click()">📂 <span id="txt-restore">Restore</span></button>
-                <button class="action-btn secondary" onclick="reloadCloudData()">☁️ Reload Cloud</button>
-                <button class="action-btn ghost" onclick="showSyncDebugInfo()">🧪 Debug</button>
+                <button class="action-btn secondary" onclick="reloadCloudData()">☁️ <span id="txt-sync-cloud">Đồng bộ</span></button>
+                <button class="action-btn ghost" onclick="exportCSV()">📊 <span id="txt-export-csv">Xuất CSV</span></button>
                 <input type="file" id="importInput" accept=".json" onchange="importBackup(event)">
             </div>
         </div>
@@ -411,6 +455,76 @@
                 <div class="s-item"><small id="txt-stat-off">HS Nghỉ (Phí bù)</small><div id="sum-off" class="s-val" style="color:var(--r)">0</div></div>
                 <div class="s-item"><small id="txt-stat-sal">Thu Nhập Dự Kiến</small><div id="sum-salary" class="s-val" style="color:var(--g)">0đ</div></div>
             </div>
+
+            <div class="teacher-dashboard" id="teacherDashboard">
+                <div class="dash-card">
+                    <small id="txt-dash-classes-label">Số lớp tháng này</small>
+                    <strong id="dashClasses">0</strong>
+                    <span id="dashClassesSub">0h</span>
+                </div>
+                <div class="dash-card">
+                    <small id="txt-dash-students-label">Học viên đang học</small>
+                    <strong id="dashStudents">0</strong>
+                    <span id="dashStudentsSub">0 lớp còn lại</span>
+                </div>
+                <div class="dash-card success">
+                    <small id="txt-dash-paid-label">Đã thanh toán</small>
+                    <strong id="dashPaid">0đ</strong>
+                    <span id="dashPaidSub">Theo lớp có nhập học phí</span>
+                </div>
+                <div class="dash-card danger">
+                    <small id="txt-dash-unpaid-label">Chưa thanh toán</small>
+                    <strong id="dashUnpaid">0đ</strong>
+                    <span id="dashUnpaidSub">0 lớp</span>
+                </div>
+            </div>
+
+            <div class="next-class-card" id="nextClassCard">
+                <div>
+                    <small id="txt-next-class-label">Lớp tiếp theo</small>
+                    <h3 id="nextClassTitle">Chưa có lịch sắp tới</h3>
+                    <p id="nextClassMeta">Thêm lớp mới để theo dõi lịch gần nhất.</p>
+                </div>
+                <button class="action-btn ghost" onclick="openAddModal()">➕ <span id="txt-next-add">Thêm lớp</span></button>
+            </div>
+
+            <section class="filter-card">
+                <div class="filter-head">
+                    <div>
+                        <p class="action-kicker" id="txt-filter-kicker">Bộ lọc lịch</p>
+                        <h3 id="txt-filter-title">Tìm nhanh ca dạy</h3>
+                    </div>
+                    <button class="action-btn ghost" onclick="resetScheduleFilters()">↺ <span id="txt-filter-reset">Đặt lại</span></button>
+                </div>
+                <div class="filter-grid">
+                    <div>
+                        <label id="txt-filter-search-label">Tìm học viên</label>
+                        <input type="search" id="filterSearch" placeholder="Tên học viên..." oninput="renderTable();updateDataUI();">
+                    </div>
+                    <div>
+                        <label id="txt-filter-course-label">Khóa học</label>
+                        <select id="filterCourse" onchange="renderTable();updateDataUI();"></select>
+                    </div>
+                    <div>
+                        <label id="txt-filter-payment-label">Thanh toán</label>
+                        <select id="filterPayment" onchange="renderTable();updateDataUI();">
+                            <option value="all">Tất cả</option>
+                            <option value="paid">Đã thanh toán</option>
+                            <option value="unpaid">Chưa thanh toán</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label id="txt-filter-status-label">Trạng thái</label>
+                        <select id="filterStatus" onchange="renderTable();updateDataUI();">
+                            <option value="all">Tất cả</option>
+                            <option value="active">Đang học</option>
+                            <option value="off">Nghỉ / hủy</option>
+                            <option value="conflict">Trùng lịch</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-result" id="filterResult">Đang hiển thị tất cả lớp trong tuần.</div>
+            </section>
             <div class="main-actions">
                 <section class="action-card primary-action-card">
                     <div class="action-card-header">
@@ -495,6 +609,18 @@
                     <canvas id="barChart"></canvas>
                 </div>
             </div>
+            <div class="chart-card student-summary-card">
+                <div class="summary-head">
+                    <h3 id="txt-student-summary-title">Tổng hợp theo học viên</h3>
+                    <button class="action-btn ghost" onclick="exportCSV()">📊 <span id="txt-export-csv-2">Xuất CSV</span></button>
+                </div>
+                <div class="student-summary-wrap">
+                    <table class="student-summary-table">
+                        <thead id="studentSummaryHead"></thead>
+                        <tbody id="studentSummaryBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
         </div>
     </div>
@@ -523,18 +649,29 @@
 <div class="modal" id="addM"><div class="m-box">
     <h3 id="txt-m-add-title">Chi Tiết Lớp Học</h3>
     <input type="hidden" id="editIdx">
-    <label id="lbl-name">Tên học viên</label><input type="text" id="mName">
+    <label id="lbl-name">Tên học viên</label><input type="text" id="mName" list="studentNameList">
+    <datalist id="studentNameList"></datalist>
+    <div class="modal-grid">
+        <div><label id="lbl-course">Khóa học</label><select id="mCourse"></select></div>
+        <div><label id="lbl-mode">Hình thức</label><select id="mMode"></select></div>
+    </div>
     <label id="lbl-date">Ngày (DD/MM)</label><input type="text" id="mDate">
     <div style="display:flex; gap:10px; margin-top:10px;">
         <div style="flex:1;"><label id="lbl-start">Bắt đầu</label><input type="text" id="mStart" placeholder="7:15"></div>
         <div style="flex:1;"><label id="lbl-end">Kết thúc</label><input type="text" id="mEnd" placeholder="9:15"></div>
     </div>
+    <div class="modal-grid">
+        <div><label id="lbl-rate">Học phí/giờ</label><input type="number" id="mRate" placeholder="VD: 150000" min="0" step="1000"></div>
+        <div><label id="lbl-paid">Thanh toán</label><select id="mPaid"></select></div>
+    </div>
+    <label id="lbl-location">Địa điểm / Link học</label><input type="text" id="mLocation" placeholder="Zoom, Google Meet, nhà học viên...">
     <label id="lbl-note">Ghi chú (nhập 'off' nếu HS nghỉ)</label><input type="text" id="mNote">
     <div style="text-align: right; margin-top: 15px;">
         <button class="action-btn" style="background:#94a3b8; display:inline-flex;" onclick="closeM('addM')">Hủy</button>
         <button class="action-btn b-add" style="display:inline-flex;" onclick="saveOne()"><span id="txt-m-add-save">Xác Nhận</span></button>
     </div>
 </div></div>
+
 
 <div class="modal" id="confirmM"><div class="m-box">
     <h3 id="confirmTitle">Xác nhận xóa</h3>
@@ -568,6 +705,13 @@
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+    /*
+        Production note:
+        App này dùng Firebase Authentication + Cloud Firestore.
+        Mỗi tài khoản lưu dữ liệu riêng tại document users/{uid}.
+        Nếu đổi Firebase project, chỉ cần thay firebaseConfig bên dưới.
+    */
+
     const firebaseConfig = {
         apiKey: "AIzaSyDEwa0mBYSjViMRzoOuxGNgo8zarQCpu5Y",
         authDomain: "ptbtool-9f1b0.firebaseapp.com",
@@ -576,6 +720,15 @@
         messagingSenderId: "1053484015135",
         appId: "1:1053484015135:web:4276ea6afaf25d98457f2a",
         measurementId: "G-5V2CGG0DN9"
+    };
+
+    window._firebaseConfig = firebaseConfig;
+    window._lastFirebaseError = null;
+    window._lastFirebaseStatus = {
+        ok: false,
+        message: 'Firebase is initializing...',
+        projectId: firebaseConfig.projectId,
+        checkedAt: null
     };
 
     const app = initializeApp(firebaseConfig);
@@ -622,13 +775,46 @@
         }
     }
 
+    function firebaseFriendlyError(e) {
+        const code = e?.code || '';
+        const msg = e?.message || String(e || 'Unknown Firebase error');
+
+        const map = {
+            'permission-denied': 'Firestore bị từ chối quyền. Thường là do Rules hết hạn hoặc chưa cho phép users/{uid}. Vui lòng liên hệ quản trị viên để kiểm tra quyền truy cập.',
+            'unavailable': 'Không kết nối được Firestore. Kiểm tra mạng hoặc Firebase service.',
+            'not-found': 'Không tìm thấy database/document. Kiểm tra projectId hoặc đã tạo Cloud Firestore chưa.',
+            'failed-precondition': 'Firestore chưa sẵn sàng hoặc database chưa được tạo đúng cách.',
+            'resource-exhausted': 'Firebase quota/billing có vấn đề. Kiểm tra gói Firebase hoặc usage.',
+            'unauthenticated': 'Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.'
+        };
+
+        return map[code] || msg;
+    }
+
+    function rememberFirebaseStatus(ok, message, error = null) {
+        window._lastFirebaseError = error ? {
+            code: error.code || '',
+            message: error.message || String(error),
+            friendly: message
+        } : null;
+        window._lastFirebaseStatus = {
+            ok,
+            message,
+            projectId: firebaseConfig.projectId,
+            authDomain: firebaseConfig.authDomain,
+            uid: currentUser?.uid || null,
+            email: currentUser?.email || null,
+            checkedAt: new Date().toISOString()
+        };
+    }
+
     window._getUserLocalKey = userLocalKey;
     window._readLocalEventsForCurrentUser = () => readLocalEventsBackup();
     window._writeLocalEventsForCurrentUser = (events) => writeLocalEventsBackup(events);
-
+    window._getFirebaseFriendlyError = firebaseFriendlyError;
     window._fbSaveData = async function(events) {
         if(!currentUser) {
-            setSyncStatus('offline');
+            setSyncStatus('offline', 'Bạn chưa đăng nhập. Dữ liệu chỉ lưu tạm trên máy.');
             throw new Error('User is not logged in. Firebase sync skipped.');
         }
         const payload = cloneEventsForSave(events);
@@ -643,35 +829,48 @@
                     updatedAtISO: new Date().toISOString(),
                     updatedAtMs: Date.now(),
                     ownerUid: currentUser.uid,
-                    ownerEmail: currentUser.email || null
+                    ownerEmail: currentUser.email || null,
+                    appVersion: 'production-teacher-manager-2026-07-01'
                 },
                 { merge: true }
             );
+            rememberFirebaseStatus(true, 'Firestore read/write OK.');
             setSyncStatus('ok');
             return true;
         } catch(e) {
+            const friendly = firebaseFriendlyError(e);
             console.error('Save error:', e);
-            setSyncStatus('error');
+            rememberFirebaseStatus(false, friendly, e);
+            setSyncStatus('error', friendly);
             throw e;
         }
     };
 
     window._fbForceReload = async function() {
         if(!currentUser) throw new Error('No logged-in user.');
-        const snap = await getDoc(doc(db, 'users', currentUser.uid));
-        const cloudEvents = snap.exists() && Array.isArray(snap.data().events) ? snap.data().events : [];
-        window.appEvents = cloudEvents;
-        writeLocalEventsBackup(cloudEvents, currentUser.uid);
-        if(window._applyCloudEvents) window._applyCloudEvents(cloudEvents, { source: 'manualReload' });
-        setSyncStatus('ok');
-        return cloudEvents;
+        try {
+            const snap = await getDoc(doc(db, 'users', currentUser.uid));
+            const cloudEvents = snap.exists() && Array.isArray(snap.data().events) ? snap.data().events : [];
+            window.appEvents = cloudEvents;
+            writeLocalEventsBackup(cloudEvents, currentUser.uid);
+            if(window._applyCloudEvents) window._applyCloudEvents(cloudEvents, { source: 'manualReload' });
+            rememberFirebaseStatus(true, `Reloaded ${cloudEvents.length} class(es) from Firestore.`);
+            setSyncStatus('ok');
+            return cloudEvents;
+        } catch(e) {
+            const friendly = firebaseFriendlyError(e);
+            rememberFirebaseStatus(false, friendly, e);
+            setSyncStatus('error', friendly);
+            throw e;
+        }
     };
 
     window._fbLogout = async function() { await signOut(auth); };
 
-    function setSyncStatus(s) {
+    function setSyncStatus(s, title = '') {
         const el = document.getElementById('syncStatus');
         if(!el) return;
+        if(title) el.title = title;
         if(s === 'saving') {
             el.className = 'sync-status sync-saving';
             el.textContent = '⏳ Đang lưu...';
@@ -708,17 +907,21 @@
                 if(docSnap.exists() && Array.isArray(docSnap.data().events)) {
                     window.appEvents = docSnap.data().events;
                     window._cloudLoadSource = 'firestore';
+                    rememberFirebaseStatus(true, `Loaded ${window.appEvents.length} class(es) from Firestore.`);
                 } else {
                     window.appEvents = readLocalEventsBackup(user.uid);
                     window._cloudLoadSource = window.appEvents.length ? 'local-user-backup' : 'empty-new-user';
+                    rememberFirebaseStatus(true, 'Firestore connected. No cloud events found yet.');
                 }
                 writeLocalEventsBackup(window.appEvents, user.uid);
                 setSyncStatus('ok');
             } catch(e) {
+                const friendly = firebaseFriendlyError(e);
                 console.error('Load error:', e);
                 window.appEvents = readLocalEventsBackup(user.uid);
                 window._cloudLoadSource = 'local-user-backup-after-cloud-error';
-                setSyncStatus('offline');
+                rememberFirebaseStatus(false, friendly, e);
+                setSyncStatus('offline', friendly);
             }
 
             if(window._appReady) window._appReady();
@@ -729,17 +932,21 @@
                 const remoteEvents = Array.isArray(snap.data().events) ? snap.data().events : [];
                 writeLocalEventsBackup(remoteEvents, user.uid);
                 window.appEvents = remoteEvents;
+                rememberFirebaseStatus(true, `Realtime sync OK. ${remoteEvents.length} class(es).`);
                 if(window._applyCloudEvents) window._applyCloudEvents(remoteEvents, { source: 'snapshot' });
                 setSyncStatus('ok');
             }, (err) => {
+                const friendly = firebaseFriendlyError(err);
                 console.error('Realtime sync error:', err);
-                setSyncStatus('offline');
+                rememberFirebaseStatus(false, friendly, err);
+                setSyncStatus('offline', friendly);
             });
         } else {
             currentUser = null;
             window._currentUserId = null;
             window._currentUserEmail = '';
             window.appEvents = [];
+            rememberFirebaseStatus(false, 'Not logged in.');
             document.getElementById('authScreen').style.display = 'flex';
             document.getElementById('mainWrapper').style.display = 'none';
             document.getElementById('appFooter').style.display = 'none';
@@ -777,6 +984,8 @@
         'auth/weak-password': 'Mật khẩu quá yếu (tối thiểu 6 ký tự).',
         'auth/invalid-credential': 'Email hoặc mật khẩu không đúng.',
         'auth/too-many-requests': 'Quá nhiều lần thử. Vui lòng thử lại sau.',
+        'auth/network-request-failed': 'Mạng đang lỗi. Kiểm tra Internet rồi thử lại.',
+        'auth/operation-not-allowed': 'Chưa bật Email/Password trong Firebase Authentication.'
     };
 
     window._doLogin = async function() {
@@ -786,7 +995,7 @@
         if(!email || !pass) return showAuthErr('Vui lòng nhập đầy đủ thông tin.');
         showAuthLoading(btn);
         try { await signInWithEmailAndPassword(auth, email, pass); }
-        catch(e) { showAuthErr(errMap[e.code] || 'Lỗi đăng nhập. Thử lại.'); hideAuthLoading(btn); }
+        catch(e) { showAuthErr(errMap[e.code] || firebaseFriendlyError(e) || 'Lỗi đăng nhập. Thử lại.'); hideAuthLoading(btn); }
     };
 
     window._doRegister = async function() {
@@ -799,7 +1008,7 @@
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, pass);
             await updateProfile(cred.user, { displayName: name });
-        } catch(e) { showAuthErr(errMap[e.code] || 'Lỗi đăng ký. Thử lại.'); hideAuthLoading(btn); }
+        } catch(e) { showAuthErr(errMap[e.code] || firebaseFriendlyError(e) || 'Lỗi đăng ký. Thử lại.'); hideAuthLoading(btn); }
     };
 
     window._doLogout = async function() {
@@ -916,7 +1125,12 @@
         const end = parseTimeInput(raw.end);
         const note = String(raw.note || '').trim();
         if(!name || !date || !start || !end || end.minutes <= start.minutes) return null;
-        return { name, date, start: start.text, end: end.text, note };
+        const course = sanitizeCourse(raw.course || raw.program || raw.type || '');
+        const mode = sanitizeMode(raw.mode || raw.learningMode || '');
+        const location = String(raw.location || raw.room || raw.link || '').trim();
+        const rate = parseMoney(raw.rate ?? raw.hourlyRate ?? raw.fee ?? '');
+        const paid = normalizePaid(raw.paid ?? raw.paymentStatus ?? raw.isPaid);
+        return { name, date, start: start.text, end: end.text, note, course, mode, location, rate, paid };
     }
 
     function normalizeEvents(events) {
@@ -926,6 +1140,121 @@
     function getEventMonth(ev) {
         const date = normalizeDateInput(ev?.date);
         return date ? Number(date.split('/')[1]) : NaN;
+    }
+
+    const COURSE_OPTIONS = ['IELTS', 'TOEIC', 'VSTEP', 'KET', 'PET', 'Movers', 'Flyers', 'Starters', 'Communicative', 'Grammar', 'Other'];
+    const MODE_OPTIONS = ['Offline', 'Online', 'Hybrid'];
+
+    function parseMoney(value) {
+        const n = Number(String(value ?? '').replace(/[^0-9.-]/g, ''));
+        return Number.isFinite(n) && n > 0 ? Math.round(n) : 0;
+    }
+
+    function fmtMoney(value) {
+        const n = Number(value) || 0;
+        return Math.round(n).toLocaleString() + (lang === 'vi' ? 'đ' : 'VND');
+    }
+
+    function sanitizeCourse(value) {
+        const raw = String(value || '').trim();
+        if(!raw) return '';
+        const found = COURSE_OPTIONS.find(c => c.toLowerCase() === raw.toLowerCase());
+        return found || raw.slice(0, 30);
+    }
+
+    function sanitizeMode(value) {
+        const raw = String(value || '').trim();
+        if(!raw) return '';
+        const found = MODE_OPTIONS.find(m => m.toLowerCase() === raw.toLowerCase());
+        return found || raw.slice(0, 20);
+    }
+
+    function normalizePaid(value) {
+        if(value === true || String(value).toLowerCase() === 'paid' || String(value).toLowerCase() === 'true' || String(value).toLowerCase() === 'yes') return 'paid';
+        return 'unpaid';
+    }
+
+    function isOffEvent(ev) {
+        return Boolean(ev?.note && /(off|nghỉ|hủy|huỷ|cancel)/i.test(ev.note));
+    }
+
+    function eventDurationHours(ev) {
+        if(isOffEvent(ev)) return 0;
+        const duration = timeToVal(ev.end) - timeToVal(ev.start);
+        return Number.isFinite(duration) && duration > 0 ? duration / 60 : 0;
+    }
+
+    function getEventRevenue(ev) {
+        const rate = parseMoney(ev?.rate);
+        return rate > 0 ? rate * eventDurationHours(ev) : 0;
+    }
+
+    function eventDateTime(ev) {
+        const date = normalizeDateInput(ev?.date);
+        const time = parseTimeInput(ev?.start);
+        if(!date || !time) return null;
+        const [day, month] = date.split('/').map(Number);
+        const h = Math.floor(time.minutes / 60);
+        const m = time.minutes % 60;
+        return new Date(new Date().getFullYear(), month - 1, day, h, m);
+    }
+
+    function getActiveWeekDates() {
+        const weeks = getWeeks(curMonth);
+        const week = weeks[curWeekIdx];
+        if(!week) return [];
+        const dates = [];
+        for(let i=0; i<7; i++) {
+            const date = new Date(week.start);
+            date.setDate(week.start.getDate() + i);
+            dates.push(`${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}`);
+        }
+        return dates;
+    }
+
+    function getFilters() {
+        return {
+            search: String(document.getElementById('filterSearch')?.value || '').trim().toLowerCase(),
+            course: String(document.getElementById('filterCourse')?.value || 'all'),
+            payment: String(document.getElementById('filterPayment')?.value || 'all'),
+            status: String(document.getElementById('filterStatus')?.value || 'all')
+        };
+    }
+
+    function eventMatchesFilters(ev, idx, conflictSet = new Set()) {
+        const f = getFilters();
+        if(f.search && !`${ev.name} ${ev.note} ${ev.location}`.toLowerCase().includes(f.search)) return false;
+        if(f.course !== 'all' && (ev.course || '') !== f.course) return false;
+        if(f.payment !== 'all' && normalizePaid(ev.paid) !== f.payment) return false;
+        if(f.status === 'active' && isOffEvent(ev)) return false;
+        if(f.status === 'off' && !isOffEvent(ev)) return false;
+        if(f.status === 'conflict' && !conflictSet.has(idx)) return false;
+        return true;
+    }
+
+    function resetScheduleFilters() {
+        ['filterSearch', 'filterCourse', 'filterPayment', 'filterStatus'].forEach(id => {
+            const el = document.getElementById(id);
+            if(!el) return;
+            el.value = id === 'filterCourse' || id === 'filterPayment' || id === 'filterStatus' ? 'all' : '';
+        });
+        renderTable();
+        updateDataUI();
+    }
+
+    function populateSelectOptions() {
+        const courseSelect = document.getElementById('mCourse');
+        if(courseSelect) {
+            courseSelect.innerHTML = `<option value="">${lang === 'vi' ? 'Chưa chọn' : 'Not set'}</option>` + COURSE_OPTIONS.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+        }
+        const modeSelect = document.getElementById('mMode');
+        if(modeSelect) {
+            modeSelect.innerHTML = `<option value="">${lang === 'vi' ? 'Chưa chọn' : 'Not set'}</option>` + MODE_OPTIONS.map(m => `<option value="${escapeHTML(m)}">${escapeHTML(m)}</option>`).join('');
+        }
+        const paidSelect = document.getElementById('mPaid');
+        if(paidSelect) {
+            paidSelect.innerHTML = `<option value="unpaid">${lang === 'vi' ? 'Chưa thanh toán' : 'Unpaid'}</option><option value="paid">${lang === 'vi' ? 'Đã thanh toán' : 'Paid'}</option>`;
+        }
     }
 
     const timeSlots = ["7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00"];
@@ -938,7 +1267,7 @@
             stat_h: "Tổng Giờ Dạy", stat_ot: "Giờ OT (>216h)", stat_off: "HS Nghỉ (Phí bù)", stat_sal: "Thu Nhập Dự Kiến",
             btn_add: "Thêm Ca", btn_quick: "Nhập Nhanh", btn_report: "Báo Cáo", btn_clear: "Xóa Hết",
             quote: '"Sự chuẩn bị tốt nhất cho ngày mai là làm tốt công việc ngày hôm nay."',
-            m_quick_title: "⚡ Nhập Nhanh Dữ Liệu", m_quick_desc: "Cú pháp: Tên | T2 (30/03) 7h15-9h15 | ghi chú", m_quick_save: "Lưu Toàn Bộ",
+            m_quick_title: "⚡ Nhập Nhanh Dữ Liệu", m_quick_desc: "Cú pháp: Tên | T2 (30/03) 7h15-9h15 | ghi chú. Có thể nhập dạng block: Tên: rồi các dòng lịch.", m_quick_save: "Lưu Toàn Bộ",
             m_add_title: "Thêm/Sửa Lớp Học", lbl_name: "Tên học viên", lbl_date: "Ngày (DD/MM)", lbl_start: "Bắt đầu", lbl_end: "Kết thúc", lbl_note: "Ghi chú (gõ 'off' nếu nghỉ)", m_add_save: "Xác Nhận",
             monthStr: "Tháng", weekStr: "Tuần", days: ["T2","T3","T4","T5","T6","T7","CN"],
             msg_del: "Xóa lớp này?", msg_clear: "XÓA TOÀN BỘ DỮ LIỆU? Không thể hoàn tác!", msg_nodata: "Không có dữ liệu trong tuần này.",
@@ -950,7 +1279,10 @@
             undo: "Hoàn tác", deleted: "Đã xóa", classes_will_be_deleted: "lớp học sẽ bị xóa", selected_count: "mục đã chọn", student_filter: "Xóa theo học viên",
             delete_student: "Xóa", type_delete_all: "Gõ DELETE ALL để xác nhận xóa toàn bộ dữ liệu.", confirm_cancel: "Hủy", confirm_delete: "Xác nhận xóa",
             confirm_delete_title: "Xác nhận xóa dữ liệu", confirm_delete_desc: "Hành động này sẽ chỉ xóa các lớp khớp với điều kiện bên dưới.", confirm_delete_all_title: "XÓA TOÀN BỘ DỮ LIỆU?", confirm_delete_all_desc: "Đây là hành động nguy hiểm. Bạn vẫn có thể hoàn tác ngay sau khi xóa, nhưng hãy sao lưu trước nếu cần.",
-            no_items: "Không có lớp nào phù hợp để xóa.", restored: "Đã hoàn tác và khôi phục dữ liệu.", all_students: "Chọn học viên", date_range_invalid: "Vui lòng nhập khoảng ngày hợp lệ dạng DD/MM.", select_mode_on: "Đang chọn nhiều", delete_all_filter: "Toàn bộ dữ liệu"
+            no_items: "Không có lớp nào phù hợp để xóa.", restored: "Đã hoàn tác và khôi phục dữ liệu.", all_students: "Chọn học viên", date_range_invalid: "Vui lòng nhập khoảng ngày hợp lệ dạng DD/MM.", select_mode_on: "Đang chọn nhiều", delete_all_filter: "Toàn bộ dữ liệu",
+            sync_cloud: "Đồng bộ", export_csv: "Xuất CSV", dash_classes: "Số lớp tháng này", dash_students: "Học viên đang học", dash_paid: "Đã thanh toán", dash_unpaid: "Chưa thanh toán",
+            next_class: "Lớp tiếp theo", filter_kicker: "Bộ lọc lịch", filter_title: "Tìm nhanh ca dạy", filter_reset: "Đặt lại", filter_search: "Tìm học viên", filter_course: "Khóa học", filter_payment: "Thanh toán", filter_status: "Trạng thái", student_summary_title: "Tổng hợp theo học viên",
+            lbl_course: "Khóa học", lbl_mode: "Hình thức", lbl_rate: "Học phí/giờ", lbl_paid: "Thanh toán", lbl_location: "Địa điểm / Link học"
         },
         en: {
             opacity: "Board Opacity:", backup: "Backup", restore: "Restore", btn_bg: "Change BG",
@@ -959,7 +1291,7 @@
             stat_h: "Total Hours", stat_ot: "OT Hours", stat_off: "Canceled (Fee)", stat_sal: "Est. Income",
             btn_add: "Add Class", btn_quick: "Quick Add", btn_report: "Generate", btn_clear: "Clear All",
             quote: '"The best preparation for tomorrow is doing your best today."',
-            m_quick_title: "⚡ Quick Import", m_quick_desc: "Format: Name | Mon (30/03) 7h15-9h15 | note", m_quick_save: "Save All",
+            m_quick_title: "⚡ Quick Import", m_quick_desc: "Format: Name | Mon (30/03) 7h15-9h15 | note. Block format is supported: Name: then schedule lines.", m_quick_save: "Save All",
             m_add_title: "Add/Edit Class", lbl_name: "Student Name", lbl_date: "Date (DD/MM)", lbl_start: "Start", lbl_end: "End", lbl_note: "Note (type 'off' if canceled)", m_add_save: "Confirm",
             monthStr: "Month", weekStr: "Week", days: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
             msg_del: "Delete this class?", msg_clear: "CLEAR ALL DATA? This cannot be undone!", msg_nodata: "No schedule data for this week.",
@@ -971,7 +1303,10 @@
             undo: "Undo", deleted: "Deleted", classes_will_be_deleted: "classes will be deleted", selected_count: "selected", student_filter: "Delete by student",
             delete_student: "Delete", type_delete_all: "Type DELETE ALL to confirm deleting all data.", confirm_cancel: "Cancel", confirm_delete: "Confirm delete",
             confirm_delete_title: "Confirm data deletion", confirm_delete_desc: "This action will only delete classes matching the condition below.", confirm_delete_all_title: "DELETE ALL DATA?", confirm_delete_all_desc: "This is dangerous. You can still undo immediately after deletion, but make a backup first if needed.",
-            no_items: "No matching classes to delete.", restored: "Undo complete. Data restored.", all_students: "Choose student", date_range_invalid: "Please enter a valid DD/MM date range.", select_mode_on: "Selection mode", delete_all_filter: "Entire dataset"
+            no_items: "No matching classes to delete.", restored: "Undo complete. Data restored.", all_students: "Choose student", date_range_invalid: "Please enter a valid DD/MM date range.", select_mode_on: "Selection mode", delete_all_filter: "Entire dataset",
+            sync_cloud: "Sync", export_csv: "Export CSV", dash_classes: "Classes this month", dash_students: "Active students", dash_paid: "Paid", dash_unpaid: "Unpaid",
+            next_class: "Next class", filter_kicker: "Schedule filters", filter_title: "Find sessions quickly", filter_reset: "Reset", filter_search: "Search student", filter_course: "Course", filter_payment: "Payment", filter_status: "Status", student_summary_title: "Student summary",
+            lbl_course: "Course", lbl_mode: "Mode", lbl_rate: "Fee/hour", lbl_paid: "Payment", lbl_location: "Location / Class link"
         }
     };
 
@@ -1156,7 +1491,10 @@
         setLang(lang);
         const source = window._cloudLoadSource || 'unknown';
         if(source.includes('local-user-backup')) {
-            showToast(lang === 'vi' ? '💾 Đang dùng bản lưu tạm của tài khoản này.' : '💾 Using this account’s local backup.');
+            const msg = window._lastFirebaseError?.friendly || '';
+            showToast(lang === 'vi'
+                ? `💾 Đang dùng bản lưu tạm của tài khoản này. ${msg}`
+                : `💾 Using this account’s local backup. ${msg}`);
         }
     };
 
@@ -1221,6 +1559,28 @@
         setTxt('txt-type-delete-all', d.type_delete_all);
         setTxt('txt-confirm-cancel', d.confirm_cancel);
         setTxt('txt-confirm-delete', d.confirm_delete);
+        setTxt('txt-sync-cloud', d.sync_cloud);
+        setTxt('txt-export-csv', d.export_csv);
+        setTxt('txt-export-csv-2', d.export_csv);
+        setTxt('txt-dash-classes-label', d.dash_classes);
+        setTxt('txt-dash-students-label', d.dash_students);
+        setTxt('txt-dash-paid-label', d.dash_paid);
+        setTxt('txt-dash-unpaid-label', d.dash_unpaid);
+        setTxt('txt-next-class-label', d.next_class);
+        setTxt('txt-next-add', d.btn_add);
+        setTxt('txt-filter-kicker', d.filter_kicker);
+        setTxt('txt-filter-title', d.filter_title);
+        setTxt('txt-filter-reset', d.filter_reset);
+        setTxt('txt-filter-search-label', d.filter_search);
+        setTxt('txt-filter-course-label', d.filter_course);
+        setTxt('txt-filter-payment-label', d.filter_payment);
+        setTxt('txt-filter-status-label', d.filter_status);
+        setTxt('txt-student-summary-title', d.student_summary_title);
+        setTxt('lbl-course', d.lbl_course);
+        setTxt('lbl-mode', d.lbl_mode);
+        setTxt('lbl-rate', d.lbl_rate);
+        setTxt('lbl-paid', d.lbl_paid);
+        setTxt('lbl-location', d.lbl_location);
         syncSalaryToggle();
         startApp();
     }
@@ -1241,6 +1601,7 @@
         renderWeekTabs();
         renderTable();
         calcSalary();
+        updateTeacherDashboard();
         updateDataUI();
     }
 
@@ -1318,11 +1679,14 @@
         document.getElementById('tBody').innerHTML = timeSlots.map(t => `<tr><td class="time-col">${t}</td>${weekDates.map(date => `<td id="cell-${date}-${t.replace(':','')}"></td>`).join('')}</tr>`).join('');
 
         const conflictSet = getConflictSet();
+        let renderedCount = 0;
         appEvents.forEach((ev, idx) => {
+            if(!eventMatchesFilters(ev, idx, conflictSet)) return;
             let slotKey = findNearestSlot(ev.start);
             let cell = document.getElementById(`cell-${ev.date}-${slotKey}`);
             if (cell) {
-                const isOff = ev.note && ev.note.toLowerCase().includes('off');
+                renderedCount++;
+                const isOff = isOffEvent(ev);
                 const isConflict = conflictSet.has(idx);
                 let el = document.createElement('div');
                 el.className = `event ${isOff ? 'off' : ''} ${isConflict ? 'conflict' : ''}`.trim();
@@ -1344,7 +1708,12 @@
                 const checked = selectedEventIdxs.has(idx) ? 'checked' : '';
                 const selectHtml = selectionMode ? `<label class="event-select-label"><input class="event-select-box" type="checkbox" ${checked}> ${lang === 'vi' ? 'Chọn' : 'Select'}</label>` : '';
                 const deleteHtml = selectionMode ? '' : `<button class="btn-del">×</button>`;
-                el.innerHTML = `${selectHtml}<b>${escapeHTML(ev.name)}</b><br>${escapeHTML(ev.start)}-${escapeHTML(ev.end)}${deleteHtml}`;
+                const paymentText = normalizePaid(ev.paid) === 'paid' ? (lang === 'vi' ? 'Đã TT' : 'Paid') : (lang === 'vi' ? 'Chưa TT' : 'Unpaid');
+                const coursePill = ev.course ? `<span class="event-pill">${escapeHTML(ev.course)}</span>` : '';
+                const modePill = ev.mode ? `<span class="event-pill">${escapeHTML(ev.mode)}</span>` : '';
+                const payPill = ev.rate ? `<span class="event-pill payment-${normalizePaid(ev.paid)}">${paymentText}</span>` : '';
+                const locationLine = ev.location ? `<span class="event-detail-line">📍 ${escapeHTML(ev.location)}</span>` : '';
+                el.innerHTML = `${selectHtml}<b>${escapeHTML(ev.name)}</b><br>${escapeHTML(ev.start)}-${escapeHTML(ev.end)}<div class="event-meta">${coursePill}${modePill}${payPill}</div>${locationLine}${deleteHtml}`;
 
                 if(selectionMode) {
                     const cb = el.querySelector('.event-select-box');
@@ -1374,6 +1743,7 @@
                 makeDraggable(el, idx);
             }
         });
+        updateFilterResult(renderedCount);
     }
 
     // --- DRAG & DROP ---
@@ -1552,6 +1922,12 @@
         document.getElementById('mDate').value = "";
         document.getElementById('mStart').value = "";
         document.getElementById('mEnd').value = "";
+        populateSelectOptions();
+        document.getElementById('mCourse').value = "";
+        document.getElementById('mMode').value = "";
+        document.getElementById('mLocation').value = "";
+        document.getElementById('mRate').value = "";
+        document.getElementById('mPaid').value = "unpaid";
         document.getElementById('mNote').value = "";
         openM('addM');
     }
@@ -1596,7 +1972,7 @@
         const lower = `${schedule} ${note}`.toLowerCase();
         if(lower.includes('off') || lower.includes('nghỉ')) note = note || 'off';
 
-        return { event: { name, date, start: range.start, end: range.end, note } };
+        return { event: { name, date, start: range.start, end: range.end, note, course: '', mode: '', location: '', rate: 0, paid: 'unpaid' } };
     }
 
     function saveQuick() {
@@ -1655,13 +2031,18 @@
         const start = parseTimeInput(document.getElementById('mStart').value);
         const end = parseTimeInput(document.getElementById('mEnd').value);
         const note = document.getElementById('mNote').value.trim();
+        const course = sanitizeCourse(document.getElementById('mCourse')?.value || '');
+        const mode = sanitizeMode(document.getElementById('mMode')?.value || '');
+        const location = document.getElementById('mLocation')?.value.trim() || '';
+        const rate = parseMoney(document.getElementById('mRate')?.value || '');
+        const paid = normalizePaid(document.getElementById('mPaid')?.value || 'unpaid');
 
         if(!name) return showToast(lang === 'vi' ? '⚠️ Vui lòng nhập tên học viên.' : '⚠️ Please enter the student name.');
         if(!date) return showToast(lang === 'vi' ? '⚠️ Ngày phải đúng dạng DD/MM.' : '⚠️ Date must be in DD/MM format.');
         if(!start || !end) return showToast(lang === 'vi' ? '⚠️ Giờ phải đúng dạng 7h15, 7:15 hoặc 7h.' : '⚠️ Time must be like 7h15, 7:15, or 7h.');
         if(end.minutes <= start.minutes) return showToast(lang === 'vi' ? '⚠️ Giờ kết thúc phải sau giờ bắt đầu.' : '⚠️ End time must be after start time.');
 
-        const ev = { name, date, start: start.text, end: end.text, note };
+        const ev = { name, date, start: start.text, end: end.text, note, course, mode, location, rate, paid };
         if(idx !== '') appEvents[Number(idx)] = ev; else appEvents.push(ev);
         saveData();
         closeM('addM');
@@ -1675,6 +2056,12 @@
         document.getElementById('mDate').value = e.date;
         document.getElementById('mStart').value = e.start;
         document.getElementById('mEnd').value = e.end;
+        populateSelectOptions();
+        document.getElementById('mCourse').value = e.course || "";
+        document.getElementById('mMode').value = e.mode || "";
+        document.getElementById('mLocation').value = e.location || "";
+        document.getElementById('mRate').value = e.rate || "";
+        document.getElementById('mPaid').value = normalizePaid(e.paid);
         document.getElementById('mNote').value = e.note;
         openM('addM');
     }
@@ -1926,8 +2313,117 @@
         });
     }
 
+    function updateFilterResult(renderedCount = null) {
+        const el = document.getElementById('filterResult');
+        if(!el) return;
+        const weekDates = getActiveWeekDates();
+        const conflictSet = getConflictSet();
+        const totalInWeek = appEvents.filter(e => weekDates.includes(e.date)).length;
+        const visible = renderedCount ?? appEvents.filter((e, idx) => weekDates.includes(e.date) && eventMatchesFilters(e, idx, conflictSet)).length;
+        el.textContent = lang === 'vi'
+            ? `Đang hiển thị ${visible}/${totalInWeek} lớp trong tuần này.`
+            : `Showing ${visible}/${totalInWeek} class(es) this week.`;
+    }
+
+    function updateTeacherDashboard() {
+        const monthEvents = appEvents.filter(e => getEventMonth(e) === curMonth);
+        const activeEvents = monthEvents.filter(e => !isOffEvent(e));
+        const hours = activeEvents.reduce((sum, e) => sum + eventDurationHours(e), 0);
+        const students = new Set(activeEvents.map(e => e.name).filter(Boolean));
+        const paid = activeEvents.filter(e => normalizePaid(e.paid) === 'paid').reduce((sum, e) => sum + getEventRevenue(e), 0);
+        const unpaidEvents = activeEvents.filter(e => normalizePaid(e.paid) !== 'paid' && getEventRevenue(e) > 0);
+        const unpaid = unpaidEvents.reduce((sum, e) => sum + getEventRevenue(e), 0);
+        setTxt('dashClasses', String(activeEvents.length));
+        setTxt('dashClassesSub', `${hours.toFixed(1)}h`);
+        setTxt('dashStudents', String(students.size));
+        setTxt('dashStudentsSub', lang === 'vi' ? `${monthEvents.length} lớp trong tháng` : `${monthEvents.length} class(es) this month`);
+        setTxt('dashPaid', fmtMoney(paid));
+        setTxt('dashPaidSub', lang === 'vi' ? 'Theo lớp có nhập học phí' : 'From classes with rates');
+        setTxt('dashUnpaid', fmtMoney(unpaid));
+        setTxt('dashUnpaidSub', lang === 'vi' ? `${unpaidEvents.length} lớp chưa thanh toán` : `${unpaidEvents.length} unpaid class(es)`);
+
+        const now = new Date();
+        const upcoming = appEvents
+            .filter(e => !isOffEvent(e))
+            .map(e => ({ ev: e, dt: eventDateTime(e) }))
+            .filter(x => x.dt && x.dt >= now)
+            .sort((a,b) => a.dt - b.dt)[0];
+        if(upcoming) {
+            const e = upcoming.ev;
+            setTxt('nextClassTitle', `${e.name} • ${e.date} • ${fmtTime(e.start)}-${fmtTime(e.end)}`);
+            const parts = [e.course, e.mode, e.location].filter(Boolean);
+            setTxt('nextClassMeta', parts.length ? parts.join(' • ') : (lang === 'vi' ? 'Chưa có khóa học/địa điểm.' : 'No course/location details yet.'));
+        } else {
+            setTxt('nextClassTitle', lang === 'vi' ? 'Chưa có lịch sắp tới' : 'No upcoming class');
+            setTxt('nextClassMeta', lang === 'vi' ? 'Thêm lớp mới để theo dõi lịch gần nhất.' : 'Add a class to track your next session.');
+        }
+    }
+
+    function populateTeachingFilters() {
+        populateSelectOptions();
+        const courseFilter = document.getElementById('filterCourse');
+        if(courseFilter) {
+            const current = courseFilter.value || 'all';
+            const courses = [...new Set(appEvents.map(e => e.course).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+            courseFilter.innerHTML = `<option value="all">${lang === 'vi' ? 'Tất cả' : 'All'}</option>` + courses.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+            courseFilter.value = current === 'all' || courses.includes(current) ? current : 'all';
+        }
+        const datalist = document.getElementById('studentNameList');
+        if(datalist) {
+            const names = [...new Set(appEvents.map(e => e.name).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+            datalist.innerHTML = names.map(n => `<option value="${escapeHTML(n)}"></option>`).join('');
+        }
+    }
+
+    function buildStudentSummary() {
+        const rows = new Map();
+        appEvents.filter(e => getEventMonth(e) === curMonth).forEach(e => {
+            if(!rows.has(e.name)) rows.set(e.name, { name:e.name, classes:0, off:0, hours:0, paid:0, unpaid:0, next:null });
+            const r = rows.get(e.name);
+            r.classes += 1;
+            if(isOffEvent(e)) r.off += 1;
+            r.hours += eventDurationHours(e);
+            const revenue = getEventRevenue(e);
+            if(normalizePaid(e.paid) === 'paid') r.paid += revenue; else r.unpaid += revenue;
+            const dt = eventDateTime(e);
+            if(dt && dt >= new Date() && !isOffEvent(e) && (!r.next || dt < r.next.dt)) r.next = { dt, ev:e };
+        });
+        return [...rows.values()].sort((a,b) => b.hours - a.hours || a.name.localeCompare(b.name));
+    }
+
+    function renderStudentSummary() {
+        const head = document.getElementById('studentSummaryHead');
+        const body = document.getElementById('studentSummaryBody');
+        if(!head || !body) return;
+        const labels = lang === 'vi'
+            ? ['Học viên', 'Lớp', 'Giờ', 'Nghỉ', 'Đã TT', 'Chưa TT', 'Lớp tiếp theo']
+            : ['Student', 'Classes', 'Hours', 'Off', 'Paid', 'Unpaid', 'Next class'];
+        head.innerHTML = `<tr>${labels.map(x => `<th>${x}</th>`).join('')}</tr>`;
+        const rows = buildStudentSummary();
+        if(!rows.length) {
+            body.innerHTML = `<tr><td class="empty-state" colspan="7">${lang === 'vi' ? 'Chưa có dữ liệu tháng này.' : 'No data for this month yet.'}</td></tr>`;
+            return;
+        }
+        body.innerHTML = rows.map(r => {
+            const next = r.next ? `${r.next.ev.date} • ${fmtTime(r.next.ev.start)}-${fmtTime(r.next.ev.end)}` : '—';
+            return `<tr>
+                <td><b>${escapeHTML(r.name)}</b></td>
+                <td class="num">${r.classes}</td>
+                <td class="num">${r.hours.toFixed(1)}h</td>
+                <td class="num">${r.off}</td>
+                <td class="num">${fmtMoney(r.paid)}</td>
+                <td class="num">${fmtMoney(r.unpaid)}</td>
+                <td>${escapeHTML(next)}</td>
+            </tr>`;
+        }).join('');
+    }
+
     function updateDataUI() {
         const d = dict[lang];
+        populateTeachingFilters();
+        updateTeacherDashboard();
+        updateFilterResult();
+        renderStudentSummary();
         setTxt('txt-select-multiple', selectionMode ? d.select_mode_on : d.select_multiple);
         const bulkBar = document.getElementById('bulkBar');
         const bulkCount = document.getElementById('bulkCount');
@@ -1958,9 +2454,10 @@
             await window._fbSaveData(appEvents);
         } catch(e) {
             console.error('Cannot sync to Firebase:', e);
+            const friendly = window._getFirebaseFriendlyError ? window._getFirebaseFriendlyError(e) : '';
             showToast(lang === 'vi'
-                ? '⚠️ Đã lưu tạm trên máy, nhưng chưa đồng bộ lên Firebase.'
-                : '⚠️ Saved locally, but Firebase sync failed.');
+                ? `⚠️ Đã lưu tạm trên máy, nhưng chưa đồng bộ Firebase. ${friendly || ''}`
+                : `⚠️ Saved locally, but Firebase sync failed. ${friendly || ''}`);
         }
     }
 
@@ -2111,37 +2608,45 @@
         updateOpacity(op);
     }
 
-    // --- BASIC SYNC DEBUG ---
-    function showSyncDebugInfo() {
-        const info = {
-            user: window._currentUserEmail || '(not logged in)',
-            uid: window._currentUserId || '(none)',
-            localKey: getLocalDataKey(),
-            eventsInMemory: Array.isArray(appEvents) ? appEvents.length : 0,
-            loadSource: window._cloudLoadSource || 'unknown',
-            online: navigator.onLine
-        };
-        console.table(info);
-        showToast(lang === 'vi'
-            ? `🧪 Debug: ${info.eventsInMemory} lớp | ${info.loadSource} | ${info.online ? 'online' : 'offline'}`
-            : `🧪 Debug: ${info.eventsInMemory} classes | ${info.loadSource} | ${info.online ? 'online' : 'offline'}`);
-    }
-
     async function reloadCloudData() {
         try {
             if(!window._fbForceReload) throw new Error('Firebase reload is not ready.');
             await window._fbForceReload();
         } catch(e) {
             console.error('Cloud reload failed:', e);
-            showToast(lang === 'vi' ? '⚠️ Không tải lại được cloud. Kiểm tra mạng/Firebase Rules.' : '⚠️ Could not reload cloud data. Check network/Firebase Rules.');
+            const friendly = window._getFirebaseFriendlyError ? window._getFirebaseFriendlyError(e) : '';
+            showToast(lang === 'vi'
+                ? `⚠️ Không tải lại được cloud. ${friendly || 'Kiểm tra mạng/Firebase Rules.'}`
+                : `⚠️ Could not reload cloud data. ${friendly || 'Check network/Firebase Rules.'}`);
         }
+    }
+
+    function csvEscape(value) {
+        const str = String(value ?? '');
+        return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+    }
+
+    function exportCSV() {
+        const headers = ['Student', 'Date', 'Start', 'End', 'Hours', 'Course', 'Mode', 'Location', 'Rate', 'Payment', 'Revenue', 'Note'];
+        const rows = normalizeEvents(appEvents).map(e => [
+            e.name, e.date, e.start, e.end, eventDurationHours(e).toFixed(2), e.course || '', e.mode || '', e.location || '', e.rate || '', normalizePaid(e.paid), getEventRevenue(e).toFixed(0), e.note || ''
+        ]);
+        const csv = [headers, ...rows].map(row => row.map(csvEscape).join(',')).join('\n');
+        const blob = new Blob([`\ufeff${csv}`], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `TeachingSchedule_Export_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast(lang === 'vi' ? '✅ Đã xuất file CSV.' : '✅ CSV exported.');
     }
 
     // --- BACKUP ---
     function exportBackup() {
         const payload = {
             app: 'TeachingSchedule.io',
-            version: 'fixed-debugged-account-sync-2026-07-01',
+            version: 'production-teacher-management-2026-07-01',
             exportedAt: new Date().toISOString(),
             events: normalizeEvents(appEvents)
         };
