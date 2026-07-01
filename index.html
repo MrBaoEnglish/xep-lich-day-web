@@ -54,6 +54,8 @@
         .sync-status { font-size: 0.75em; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
         .sync-ok { background: rgba(16,185,129,0.2); color: #34d399; }
         .sync-saving { background: rgba(245,158,11,0.2); color: #fbbf24; }
+        .sync-error { background: rgba(239,68,68,0.2); color: #f87171; }
+        .sync-offline { background: rgba(148,163,184,0.22); color: #cbd5e1; }
         .btn-logout { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.82em; transition: 0.2s; }
         .btn-logout:hover { background: rgba(239,68,68,0.4); }
         
@@ -579,29 +581,64 @@
     const db = getFirestore(app);
 
     let currentUser = null;
-    let saveTimeout = null;
+
+    function cloneEventsForSave(events) {
+        return JSON.parse(JSON.stringify(Array.isArray(events) ? events : []));
+    }
+
+    function readLocalEventsBackup() {
+        try {
+            const raw = localStorage.getItem('ptbtool_data_final');
+            if(!raw) return [];
+            const parsed = JSON.parse(raw);
+            if(Array.isArray(parsed)) return parsed;
+            if(parsed && Array.isArray(parsed.events)) return parsed.events;
+            return [];
+        } catch(e) {
+            console.warn('Cannot read local backup:', e);
+            return [];
+        }
+    }
 
     window._fbSaveData = async function(events) {
-        if(!currentUser) return;
+        if(!currentUser) {
+            setSyncStatus('offline');
+            throw new Error('User is not logged in. Firebase sync skipped.');
+        }
         setSyncStatus('saving');
-        clearTimeout(saveTimeout);
-        saveTimeout = setTimeout(async () => {
-            try {
-                await setDoc(doc(db, 'users', currentUser.uid), { events: events, updatedAt: new Date().toISOString() });
-                setSyncStatus('ok');
-            } catch(e) {
-                console.error('Save error:', e);
-                setSyncStatus('ok');
-            }
-        }, 800);
+        try {
+            await setDoc(
+                doc(db, 'users', currentUser.uid),
+                { events: cloneEventsForSave(events), updatedAt: new Date().toISOString() },
+                { merge: true }
+            );
+            setSyncStatus('ok');
+            return true;
+        } catch(e) {
+            console.error('Save error:', e);
+            setSyncStatus('error');
+            throw e;
+        }
     };
 
     window._fbLogout = async function() { await signOut(auth); };
 
     function setSyncStatus(s) {
         const el = document.getElementById('syncStatus');
-        if(s === 'saving') { el.className = 'sync-status sync-saving'; el.textContent = '⏳ Đang lưu...'; }
-        else { el.className = 'sync-status sync-ok'; el.textContent = '☁️ Đã lưu'; }
+        if(!el) return;
+        if(s === 'saving') {
+            el.className = 'sync-status sync-saving';
+            el.textContent = '⏳ Đang lưu...';
+        } else if(s === 'error') {
+            el.className = 'sync-status sync-error';
+            el.textContent = '⚠️ Lưu lỗi';
+        } else if(s === 'offline') {
+            el.className = 'sync-status sync-offline';
+            el.textContent = '💾 Lưu tạm';
+        } else {
+            el.className = 'sync-status sync-ok';
+            el.textContent = '☁️ Đã lưu';
+        }
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -613,8 +650,14 @@
             document.getElementById('appFooter').style.display = 'block';
             try {
                 const docSnap = await getDoc(doc(db, 'users', user.uid));
-                window.appEvents = docSnap.exists() ? (docSnap.data().events || []) : [];
-            } catch(e) { window.appEvents = []; }
+                const cloudEvents = docSnap.exists() ? (docSnap.data().events || []) : [];
+                window.appEvents = Array.isArray(cloudEvents) && cloudEvents.length ? cloudEvents : readLocalEventsBackup();
+                setSyncStatus('ok');
+            } catch(e) {
+                console.error('Load error:', e);
+                window.appEvents = readLocalEventsBackup();
+                setSyncStatus('offline');
+            }
             if(window._appReady) window._appReady();
             else window._waitingForAuth = true;
         } else {
@@ -700,6 +743,90 @@
     let selectedEventIdxs = new Set();
     let pendingConfirmAction = null;
     let pendingConfirmNeedsPhrase = false;
+
+    const LOCAL_DATA_KEY = 'ptbtool_data_final';
+
+    function escapeHTML(value) {
+        return String(value ?? '').replace(/[&<>"']/g, ch => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[ch]));
+    }
+
+    function readLocalEvents() {
+        try {
+            const raw = localStorage.getItem(LOCAL_DATA_KEY);
+            if(!raw) return [];
+            const parsed = JSON.parse(raw);
+            if(Array.isArray(parsed)) return parsed;
+            if(parsed && Array.isArray(parsed.events)) return parsed.events;
+            return [];
+        } catch(e) {
+            console.warn('Cannot read local schedule backup:', e);
+            return [];
+        }
+    }
+
+    function writeLocalEvents(events) {
+        try {
+            localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(Array.isArray(events) ? events : []));
+        } catch(e) {
+            console.warn('Cannot write local schedule backup:', e);
+            showToast(lang === 'vi' ? '⚠️ Bộ nhớ trình duyệt đã đầy, chưa lưu tạm được.' : '⚠️ Browser storage is full. Local backup was not saved.');
+        }
+    }
+
+    function normalizeDateInput(value) {
+        const m = String(value || '').trim().match(/^(\d{1,2})\/(\d{1,2})$/);
+        if(!m) return null;
+        const day = Number(m[1]);
+        const month = Number(m[2]);
+        const year = new Date().getFullYear();
+        const d = new Date(year, month - 1, day);
+        if(d.getDate() !== day || d.getMonth() !== month - 1) return null;
+        return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}`;
+    }
+
+    function parseTimeInput(value) {
+        const raw = String(value || '').trim().toLowerCase().replace(/\s+/g, '');
+        const m = raw.match(/^(\d{1,2})(?:[h:](\d{0,2}))?$/);
+        if(!m) return null;
+        const h = Number(m[1]);
+        const min = m[2] === undefined || m[2] === '' ? 0 : Number(m[2]);
+        if(!Number.isInteger(h) || !Number.isInteger(min) || h < 0 || h > 23 || min < 0 || min > 59) return null;
+        return {
+            text: `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`,
+            minutes: h * 60 + min
+        };
+    }
+
+    function parseTimeRange(text) {
+        const m = String(text || '').match(/(\d{1,2})(?:\s*[hH:]\s*(\d{0,2}))?\s*(?:-|–|—|to|đến)\s*(\d{1,2})(?:\s*[hH:]\s*(\d{0,2}))?/i);
+        if(!m) return null;
+        const start = parseTimeInput(`${m[1]}:${m[2] || '00'}`);
+        const end = parseTimeInput(`${m[3]}:${m[4] || '00'}`);
+        if(!start || !end || end.minutes <= start.minutes) return null;
+        return { start: start.text, end: end.text };
+    }
+
+    function normalizeEvent(raw) {
+        if(!raw || typeof raw !== 'object') return null;
+        const name = String(raw.name || '').trim();
+        const date = normalizeDateInput(raw.date);
+        const start = parseTimeInput(raw.start);
+        const end = parseTimeInput(raw.end);
+        const note = String(raw.note || '').trim();
+        if(!name || !date || !start || !end || end.minutes <= start.minutes) return null;
+        return { name, date, start: start.text, end: end.text, note };
+    }
+
+    function normalizeEvents(events) {
+        return (Array.isArray(events) ? events : []).map(normalizeEvent).filter(Boolean);
+    }
+
+    function getEventMonth(ev) {
+        const date = normalizeDateInput(ev?.date);
+        return date ? Number(date.split('/')[1]) : NaN;
+    }
 
     const timeSlots = ["7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00"];
     
@@ -821,13 +948,14 @@
 
         const vivid = COLOR_PALETTE.slice(0, 10);
         const pastel = COLOR_PALETTE.slice(10);
+        const safeName = escapeHTML(ev.name);
 
         const popup = document.createElement('div');
         popup.className = 'color-picker-popup';
         popup.style.position = 'fixed';
         popup.innerHTML = `
             <button class="cp-close" id="cpCloseBtn" title="Đóng">✕</button>
-            <div class="cp-title">🎨 Màu lớp: <span class="cp-student-name">${ev.name}</span></div>
+            <div class="cp-title">🎨 Màu lớp: <span class="cp-student-name">${safeName}</span></div>
             <div class="cp-section">Màu đậm</div>
             <div class="color-grid" id="cpGridVivid">
                 ${vivid.map((c, i) => `<div class="color-swatch${cpSelectedIdx===i?' selected':''}" data-idx="${i}" style="background:${c.bg}" title="Màu ${i+1}"></div>`).join('')}
@@ -838,7 +966,7 @@
             </div>
             <div class="cp-actions">
                 <button class="cp-btn cp-btn-reset" id="cpBtnReset">↩ Mặc định</button>
-                <button class="cp-btn cp-btn-all" id="cpBtnAll">👥 Tất cả "${ev.name}"</button>
+                <button class="cp-btn cp-btn-all" id="cpBtnAll">👥 Tất cả "${safeName}"</button>
                 <button class="cp-btn cp-btn-apply" id="cpBtnApply">✓ Áp dụng lớp này</button>
             </div>
         `;
@@ -920,7 +1048,12 @@
     }
 
     // ===== APP INIT =====
-    window._appReady = function() { setLang(lang); };
+    window._appReady = function() {
+        appEvents = normalizeEvents(window.appEvents && window.appEvents.length ? window.appEvents : readLocalEvents());
+        window.appEvents = appEvents;
+        writeLocalEvents(appEvents);
+        setLang(lang);
+    };
     if(window._waitingForAuth) window._appReady();
 
     function setLang(l) {
@@ -1030,6 +1163,7 @@
                 if(a.date !== b.date) continue;
                 const aS = timeToVal(a.start), aE = timeToVal(a.end);
                 const bS = timeToVal(b.start), bE = timeToVal(b.end);
+                if(![aS, aE, bS, bE].every(Number.isFinite)) continue;
                 if(aS < bE && aE > bS) { conflicted.add(i); conflicted.add(j); }
             }
         }
@@ -1037,8 +1171,11 @@
     }
 
     function findNearestSlot(startStr) {
-        let [h, m] = startStr.split(':').map(Number);
-        let r = m >= 30 ? 30 : 0;
+        const parsed = parseTimeInput(startStr);
+        if(!parsed) return '700';
+        const h = Math.floor(parsed.minutes / 60);
+        const m = parsed.minutes % 60;
+        const r = m >= 30 ? 30 : 0;
         return `${h}${String(r).padStart(2,'0')}`;
     }
 
@@ -1074,11 +1211,6 @@
                     el.style.background = color.bg;
                     el.style.borderLeftColor = isOff ? 'rgba(255,255,255,0.5)' : color.border;
                     // Pastel màu chữ tối hơn cho dễ đọc
-                    if(idx >= 10 || (eventColorOverride[idx] !== undefined && eventColorOverride[idx] >= 10) || (studentColorMap[ev.name] !== undefined && studentColorMap[ev.name] >= 10)) {
-                        const paletteIdx = eventColorOverride[idx] !== undefined ? eventColorOverride[idx] : (studentColorMap[ev.name] !== undefined ? studentColorMap[ev.name] : -1);
-                        if(paletteIdx >= 10) el.style.color = '#1e293b';
-                    }
-                    // Check if current color is pastel
                     const paletteIdx = eventColorOverride[idx] !== undefined ? eventColorOverride[idx] : (studentColorMap[ev.name] !== undefined ? studentColorMap[ev.name] : (function(){let h=0;for(let i=0;i<ev.name.length;i++)h=ev.name.charCodeAt(i)+((h<<5)-h);return Math.abs(h)%COLOR_PALETTE.length;})());
                     if(paletteIdx >= 10) el.style.color = '#1e293b';
                 }
@@ -1090,7 +1222,7 @@
                 const checked = selectedEventIdxs.has(idx) ? 'checked' : '';
                 const selectHtml = selectionMode ? `<label class="event-select-label"><input class="event-select-box" type="checkbox" ${checked}> ${lang === 'vi' ? 'Chọn' : 'Select'}</label>` : '';
                 const deleteHtml = selectionMode ? '' : `<button class="btn-del">×</button>`;
-                el.innerHTML = `${selectHtml}<b>${ev.name}</b><br>${ev.start}-${ev.end}${deleteHtml}`;
+                el.innerHTML = `${selectHtml}<b>${escapeHTML(ev.name)}</b><br>${escapeHTML(ev.start)}-${escapeHTML(ev.end)}${deleteHtml}`;
 
                 if(selectionMode) {
                     const cb = el.querySelector('.event-select-box');
@@ -1254,6 +1386,11 @@
         const newSlotMins = slotH * 60 + slotM;
         const newStartMins = newSlotMins + minuteOffset;
         const newEndMins = newStartMins + duration;
+        if(!Number.isFinite(duration) || newStartMins < 0 || newEndMins > 24 * 60) {
+            dragEvIdx = null;
+            showToast(lang === 'vi' ? '⚠️ Không thể dời lớp ra ngoài khung giờ trong ngày.' : '⚠️ Cannot move class outside the current day.');
+            return;
+        }
         const fmt = (mins) => `${String(Math.floor(mins/60)).padStart(2,'0')}:${String(mins%60).padStart(2,'0')}`;
         appEvents[dragEvIdx] = { ...ev, date: newDate, start: fmt(newStartMins), end: fmt(newEndMins) };
         dragEvIdx = null;
@@ -1298,37 +1435,115 @@
     }
 
     // --- CRUD ---
-    function saveQuick() {
-        const txt = document.getElementById('qInput').value.trim();
-        txt.split('\n').forEach(line => {
-            if(!line.includes('|')) return;
-            const p = line.split('|').map(s => s.trim());
-            const dateM = p[1].match(/(\d{1,2})\/(\d{1,2})/);
-            const timeM = p[1].match(/(\d{1,2})[h:](\d*)[^\d]+(\d{1,2})[h:](\d*)/i);
-            if(dateM && timeM) {
-                appEvents.push({
-                    name: p[0],
-                    date: `${dateM[1].padStart(2,'0')}/${dateM[2].padStart(2,'0')}`,
-                    start: `${timeM[1].padStart(2,'0')}:${(timeM[2]||'00').padEnd(2,'0')}`,
-                    end: `${timeM[3].padStart(2,'0')}:${(timeM[4]||'00').padEnd(2,'0')}`,
-                    note: p[1].toLowerCase().includes('off') ? 'off' : (p[2] || '')
-                });
+    function parseQuickLine(line, currentName) {
+        const raw = String(line || '').trim();
+        if(!raw) return { empty: true };
+
+        // Block format support:
+        // Thành:
+        // T2 (15/06) 13h30-15h30
+        if(!raw.includes('|') && /:$/.test(raw) && !parseTimeRange(raw)) {
+            return { setName: raw.replace(/:$/, '').trim() };
+        }
+
+        let name = '';
+        let schedule = '';
+        let note = '';
+
+        if(raw.includes('|')) {
+            const parts = raw.split('|').map(s => s.trim());
+            name = parts[0] || currentName || '';
+            schedule = parts[1] || '';
+            note = parts.slice(2).join(' | ').trim();
+        } else {
+            const inlineName = raw.match(/^(.+?):\s*(.+)$/);
+            if(inlineName && parseTimeRange(inlineName[2])) {
+                name = inlineName[1].trim();
+                schedule = inlineName[2].trim();
+            } else {
+                name = currentName || '';
+                schedule = raw;
             }
+        }
+
+        const dateM = schedule.match(/(\d{1,2})\/(\d{1,2})/);
+        const date = dateM ? normalizeDateInput(`${dateM[1]}/${dateM[2]}`) : null;
+        const range = parseTimeRange(schedule);
+        if(!name || !date || !range) return { invalid: true, raw };
+
+        const lower = `${schedule} ${note}`.toLowerCase();
+        if(lower.includes('off') || lower.includes('nghỉ')) note = note || 'off';
+
+        return { event: { name, date, start: range.start, end: range.end, note } };
+    }
+
+    function saveQuick() {
+        const input = document.getElementById('qInput');
+        const txt = input.value.trim();
+        if(!txt) {
+            showToast(lang === 'vi' ? '⚠️ Vui lòng nhập dữ liệu trước khi lưu.' : '⚠️ Please enter data before saving.');
+            return;
+        }
+
+        const lines = txt.split('\n').map(line => line.trim()).filter(Boolean);
+        const invalidLines = [];
+        const newEvents = [];
+        let currentName = '';
+
+        lines.forEach((line, idx) => {
+            const parsed = parseQuickLine(line, currentName);
+            if(parsed.empty) return;
+            if(parsed.setName !== undefined) {
+                currentName = parsed.setName;
+                return;
+            }
+            if(parsed.event) {
+                newEvents.push(parsed.event);
+                return;
+            }
+            invalidLines.push(`Dòng ${idx + 1}: ${line}`);
         });
-        saveData(); closeM('quickM'); document.getElementById('qInput').value = "";
+
+        if(newEvents.length === 0) {
+            console.warn('Quick input invalid lines:', invalidLines);
+            showToast(lang === 'vi' ? '❌ Không có dòng hợp lệ nên chưa lưu.' : '❌ No valid lines found. Nothing was saved.');
+            return;
+        }
+
+        appEvents.push(...newEvents);
+        saveData();
+
+        if(invalidLines.length) {
+            console.warn('Một số dòng nhập nhanh bị lỗi:', invalidLines);
+            showToast(lang === 'vi'
+                ? `⚠️ Đã lưu ${newEvents.length} lớp. ${invalidLines.length} dòng bị lỗi, xem Console.`
+                : `⚠️ Saved ${newEvents.length} class(es). ${invalidLines.length} line(s) had errors. Check Console.`);
+            return;
+        }
+
+        showToast(lang === 'vi' ? `✅ Đã lưu ${newEvents.length} lớp thành công.` : `✅ Saved ${newEvents.length} class(es).`);
+        closeM('quickM');
+        input.value = '';
     }
 
     function saveOne() {
         const idx = document.getElementById('editIdx').value;
-        const ev = {
-            name: document.getElementById('mName').value,
-            date: document.getElementById('mDate').value.split('/').map(n => n.padStart(2,'0')).join('/'),
-            start: document.getElementById('mStart').value.replace('h',':').padStart(5,'0'),
-            end: document.getElementById('mEnd').value.replace('h',':').padStart(5,'0'),
-            note: document.getElementById('mNote').value
-        };
-        if(idx !== "") appEvents[idx] = ev; else appEvents.push(ev);
-        saveData(); closeM('addM');
+        const name = document.getElementById('mName').value.trim();
+        const date = normalizeDateInput(document.getElementById('mDate').value);
+        const start = parseTimeInput(document.getElementById('mStart').value);
+        const end = parseTimeInput(document.getElementById('mEnd').value);
+        const note = document.getElementById('mNote').value.trim();
+
+        if(!name) return showToast(lang === 'vi' ? '⚠️ Vui lòng nhập tên học viên.' : '⚠️ Please enter the student name.');
+        if(!date) return showToast(lang === 'vi' ? '⚠️ Ngày phải đúng dạng DD/MM.' : '⚠️ Date must be in DD/MM format.');
+        if(!start || !end) return showToast(lang === 'vi' ? '⚠️ Giờ phải đúng dạng 7h15, 7:15 hoặc 7h.' : '⚠️ Time must be like 7h15, 7:15, or 7h.');
+        if(end.minutes <= start.minutes) return showToast(lang === 'vi' ? '⚠️ Giờ kết thúc phải sau giờ bắt đầu.' : '⚠️ End time must be after start time.');
+
+        const ev = { name, date, start: start.text, end: end.text, note };
+        if(idx !== '') appEvents[Number(idx)] = ev; else appEvents.push(ev);
+        saveData();
+        closeM('addM');
+        showToast(lang === 'vi' ? '✅ Đã lưu lớp học.' : '✅ Class saved.');
     }
 
     function editEv(i) {
@@ -1360,17 +1575,16 @@
     }
 
     function parseDDMM(value) {
-        const m = String(value || '').trim().match(/^(\d{1,2})\/(\d{1,2})$/);
-        if(!m) return null;
-        const day = Number(m[1]), month = Number(m[2]);
+        const date = normalizeDateInput(value);
+        if(!date) return null;
+        const [day, month] = date.split('/').map(Number);
         const year = new Date().getFullYear();
         const d = new Date(year, month - 1, day);
-        if(d.getDate() !== day || d.getMonth() !== month - 1) return null;
         d.setHours(0,0,0,0);
         return d;
     }
 
-    function eventDateObj(ev) { return parseDDMM(ev.date); }
+    function eventDateObj(ev) { return parseDDMM(ev?.date); }
 
     function getIndicesByDateStrings(dateStrings) {
         const set = new Set(dateStrings);
@@ -1378,7 +1592,7 @@
     }
 
     function getIndicesByMonth(month) {
-        return appEvents.map((e, i) => parseInt(e.date.split('/')[1]) === month ? i : -1).filter(i => i !== -1);
+        return appEvents.map((e, i) => getEventMonth(e) === month ? i : -1).filter(i => i !== -1);
     }
 
     function getIndicesByStudent(name) {
@@ -1603,21 +1817,43 @@
         if(select) {
             const current = select.value;
             const names = [...new Set(appEvents.map(e => e.name).filter(Boolean))].sort((a,b) => a.localeCompare(b));
-            select.innerHTML = `<option value="">${d.all_students}</option>` + names.map(n => `<option value="${String(n).replace(/"/g, '&quot;')}">${n}</option>`).join('');
+            select.innerHTML = `<option value="">${escapeHTML(d.all_students)}</option>` + names.map(n => `<option value="${escapeHTML(n)}">${escapeHTML(n)}</option>`).join('');
             if(names.includes(current)) select.value = current;
         }
     }
 
-    function saveData() {
-        if(window._fbSaveData) window._fbSaveData(appEvents);
+    async function saveData() {
+        appEvents = normalizeEvents(appEvents);
+        window.appEvents = appEvents;
+        writeLocalEvents(appEvents);
+
         startApp();
         if(document.getElementById('view-stats')?.style.display !== 'none') updateCharts();
         updateDataUI();
+
+        try {
+            if(!window._fbSaveData) throw new Error('Firebase save function is not ready yet.');
+            await window._fbSaveData(appEvents);
+        } catch(e) {
+            console.error('Cannot sync to Firebase:', e);
+            showToast(lang === 'vi'
+                ? '⚠️ Đã lưu tạm trên máy, nhưng chưa đồng bộ lên Firebase.'
+                : '⚠️ Saved locally, but Firebase sync failed.');
+        }
     }
 
     // --- LOGIC & REPORT ---
-    function timeToVal(t) { let [h, m] = t.split(':').map(Number); return h * 60 + m; }
-    function fmtTime(t) { let [h, m] = t.split(':').map(Number); return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2,'0')}`; }
+    function timeToVal(t) {
+        const parsed = parseTimeInput(t);
+        return parsed ? parsed.minutes : NaN;
+    }
+    function fmtTime(t) {
+        const parsed = parseTimeInput(t);
+        if(!parsed) return String(t || '');
+        const h = Math.floor(parsed.minutes / 60);
+        const m = parsed.minutes % 60;
+        return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2,'0')}`;
+    }
 
     function syncSalaryToggle() {
         const btn = document.getElementById('salaryToggle');
@@ -1646,9 +1882,12 @@
     function calcSalary() {
         const BASE = 4220000, BASE_H = 216, OT_R = 40000, OFF_R = 30000;
         let mins = 0, off = 0;
-        appEvents.filter(e => parseInt(e.date.split('/')[1]) === curMonth).forEach(e => {
+        appEvents.filter(e => getEventMonth(e) === curMonth).forEach(e => {
             if(e.note && e.note.toLowerCase().includes('off')) off++;
-            else mins += (timeToVal(e.end) - timeToVal(e.start));
+            else {
+                const duration = timeToVal(e.end) - timeToVal(e.start);
+                if(Number.isFinite(duration) && duration > 0) mins += duration;
+            }
         });
         let h = mins / 60;
         let ot = Math.max(0, h - BASE_H);
@@ -1689,9 +1928,15 @@
     }
 
     function updateCharts() {
+        if(typeof Chart === 'undefined') {
+            console.warn('Chart.js is not loaded. Charts skipped.');
+            return;
+        }
         let studentHours = {};
-        appEvents.filter(e => parseInt(e.date.split('/')[1]) === curMonth && !(e.note && e.note.toLowerCase().includes('off'))).forEach(e => {
-            let h = (timeToVal(e.end) - timeToVal(e.start)) / 60;
+        appEvents.filter(e => getEventMonth(e) === curMonth && !(e.note && e.note.toLowerCase().includes('off'))).forEach(e => {
+            let duration = timeToVal(e.end) - timeToVal(e.start);
+            if(!Number.isFinite(duration) || duration <= 0) return;
+            let h = duration / 60;
             studentHours[e.name] = (studentHours[e.name] || 0) + h;
         });
         const pieLabels = Object.keys(studentHours);
@@ -1709,7 +1954,10 @@
             let m = curMonth - i; if(m <= 0) m += 12;
             monthLabels.push(`${dict[lang].monthStr} ${m}`);
             let mHours = 0;
-            appEvents.filter(e => parseInt(e.date.split('/')[1]) === m && !(e.note && e.note.toLowerCase().includes('off'))).forEach(e => { mHours += (timeToVal(e.end) - timeToVal(e.start)) / 60; });
+            appEvents.filter(e => getEventMonth(e) === m && !(e.note && e.note.toLowerCase().includes('off'))).forEach(e => {
+                const duration = timeToVal(e.end) - timeToVal(e.start);
+                if(Number.isFinite(duration) && duration > 0) mHours += duration / 60;
+            });
             monthlyHours[5-i] = mHours;
         }
         if(myBarChart) myBarChart.destroy();
@@ -1743,10 +1991,16 @@
 
     // --- BACKUP ---
     function exportBackup() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appEvents));
+        const payload = {
+            app: 'TeachingSchedule.io',
+            version: 'fixed-debugged-2026-07-01',
+            exportedAt: new Date().toISOString(),
+            events: normalizeEvents(appEvents)
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
         const a = document.createElement('a');
         a.setAttribute("href", dataStr);
-        a.setAttribute("download", `TeachingSchedule_Backup_T${curMonth}.json`);
+        a.setAttribute("download", `TeachingSchedule_Backup_T${curMonth}_${new Date().toISOString().slice(0,10)}.json`);
         a.click();
     }
     function importBackup(event) {
@@ -1756,12 +2010,24 @@
         reader.onload = function(e) {
             try {
                 const imported = JSON.parse(e.target.result);
-                if(Array.isArray(imported)) {
-                    if(confirm(lang==='vi'?"Ghi đè dữ liệu hiện tại bằng file Backup?":"Overwrite current data with Backup?")) {
-                        appEvents = imported; saveData();
-                    }
+                const rawEvents = Array.isArray(imported) ? imported : imported?.events;
+                const normalized = normalizeEvents(rawEvents);
+                if(!normalized.length) {
+                    alert(lang === 'vi' ? 'File không có dữ liệu lịch hợp lệ.' : 'This file has no valid schedule data.');
+                    return;
                 }
-            } catch(err) { alert("File lỗi / Invalid File"); }
+                if(confirm(lang==='vi'?"Ghi đè dữ liệu hiện tại bằng file Backup?":"Overwrite current data with Backup?")) {
+                    createUndoBackup();
+                    appEvents = normalized;
+                    saveData();
+                    showToast(lang === 'vi' ? `✅ Đã phục hồi ${normalized.length} lớp.` : `✅ Restored ${normalized.length} class(es).`);
+                }
+            } catch(err) {
+                console.error('Import error:', err);
+                alert("File lỗi / Invalid File");
+            } finally {
+                event.target.value = '';
+            }
         };
         reader.readAsText(file);
     }
